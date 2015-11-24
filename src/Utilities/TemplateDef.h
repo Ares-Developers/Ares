@@ -15,21 +15,394 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
+namespace detail {
+	template <typename T>
+	inline bool read(T& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate = false) {
+		if(parser.ReadString(pSection, pKey)) {
+			using base_type = std::remove_pointer_t<T>;
+
+			auto const pValue = parser.value();
+			auto const parsed = (allocate ? base_type::FindOrAllocate : base_type::Find)(pValue);
+			if(parsed || INIClass::IsBlank(pValue)) {
+				value = parsed;
+				return true;
+			} else {
+				Debug::INIParseFailed(pSection, pKey, pValue);
+			}
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<bool>(bool& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		bool buffer;
+		if(parser.ReadBool(pSection, pKey, &buffer)) {
+			value = buffer;
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<int>(int& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		int buffer;
+		if(parser.ReadInteger(pSection, pKey, &buffer)) {
+			value = buffer;
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<BYTE>(BYTE& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		int buffer;
+		if(parser.ReadInteger(pSection, pKey, &buffer)) {
+			if(buffer <= 255 && buffer >= 0) {
+				value = static_cast<BYTE>(buffer); // shut up shut up shut up C4244
+				return true;
+			} else {
+				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number between 0 and 255 inclusive.");
+			}
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<float>(float& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		double buffer;
+		if(parser.ReadDouble(pSection, pKey, &buffer)) {
+			value = static_cast<float>(buffer);
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<double>(double& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		double buffer;
+		if(parser.ReadDouble(pSection, pKey, &buffer)) {
+			value = buffer;
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<ColorStruct>(ColorStruct& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		ColorStruct buffer;
+		if(parser.Read3Bytes(pSection, pKey, reinterpret_cast<byte*>(&buffer))) {
+			value = buffer;
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid R,G,B color");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<CSFText>(CSFText& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			value = parser.value();
+			return true;
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<SHPStruct*>(SHPStruct*& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			char flag[256];
+			auto const pValue = parser.value();
+			_snprintf_s(flag, 255, "%s.shp", pValue);
+			if(auto const pImage = FileSystem::LoadSHPFile(flag)) {
+				value = pImage;
+				return true;
+			} else {
+				Debug::Log(Debug::Severity::Warning, "Failed to find file %s referenced by [%s]%s=%s\n", flag, pSection, pKey, pValue);
+				Debug::RegisterParserError();
+			}
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<MouseCursor>(MouseCursor& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		auto ret = false;
+
+		// compact way to define the cursor in one go
+		if(parser.ReadString(pSection, pKey)) {
+			auto const buffer = parser.value();
+			char* context = nullptr;
+			if(auto const pFrame = strtok_s(buffer, Ares::readDelims, &context)) {
+				Parser<int>::Parse(pFrame, &value.Frame);
+			}
+			if(auto const pCount = strtok_s(nullptr, Ares::readDelims, &context)) {
+				Parser<int>::Parse(pCount, &value.Count);
+			}
+			if(auto const pInterval = strtok_s(nullptr, Ares::readDelims, &context)) {
+				Parser<int>::Parse(pInterval, &value.Interval);
+			}
+			if(auto const pFrame = strtok_s(nullptr, Ares::readDelims, &context)) {
+				Parser<int>::Parse(pFrame, &value.MiniFrame);
+			}
+			if(auto const pCount = strtok_s(nullptr, Ares::readDelims, &context)) {
+				Parser<int>::Parse(pCount, &value.MiniCount);
+			}
+			if(auto const pHotX = strtok_s(nullptr, Ares::readDelims, &context)) {
+				MouseCursorHotSpotX::Parse(pHotX, &value.HotX);
+			}
+			if(auto const pHotY = strtok_s(nullptr, Ares::readDelims, &context)) {
+				MouseCursorHotSpotY::Parse(pHotY, &value.HotY);
+			}
+
+			ret = true;
+		}
+
+		char pFlagName[32];
+		_snprintf_s(pFlagName, 31, "%s.Frame", pKey);
+		ret |= read(value.Frame, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 31, "%s.Count", pKey);
+		ret |= read(value.Count, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 31, "%s.Interval", pKey);
+		ret |= read(value.Interval, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 31, "%s.MiniFrame", pKey);
+		ret |= read(value.MiniFrame, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 31, "%s.MiniCount", pKey);
+		ret |= read(value.MiniCount, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
+		if(parser.ReadString(pSection, pFlagName)) {
+			auto const pValue = parser.value();
+			char* context = nullptr;
+			auto const pHotX = strtok_s(pValue, ",", &context);
+			MouseCursorHotSpotX::Parse(pHotX, &value.HotX);
+
+			if(auto const pHotY = strtok_s(nullptr, ",", &context)) {
+				MouseCursorHotSpotY::Parse(pHotY, &value.HotY);
+			}
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	template <>
+	inline bool read<RocketStruct>(RocketStruct& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		auto ret = false;
+
+		char pFlagName[0x40];
+		_snprintf_s(pFlagName, 0x3F, "%s.PauseFrames", pKey);
+		ret |= read(value.PauseFrames, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.TiltFrames", pKey);
+		ret |= read(value.TiltFrames, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.PitchInitial", pKey);
+		ret |= read(value.PitchInitial, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.PitchFinal", pKey);
+		ret |= read(value.PitchFinal, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.TurnRate", pKey);
+		ret |= read(value.TurnRate, parser, pSection, pFlagName);
+
+		// sic! integer read like a float.
+		_snprintf_s(pFlagName, 0x3F, "%s.RaiseRate", pKey);
+		float buffer;
+		if(read(buffer, parser, pSection, pFlagName)) {
+			value.RaiseRate = Game::F2I(buffer);
+			ret = true;
+		}	
+
+		_snprintf_s(pFlagName, 0x3F, "%s.Acceleration", pKey);
+		ret |= read(value.Acceleration, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.Altitude", pKey);
+		ret |= read(value.Altitude, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.Damage", pKey);
+		ret |= read(value.Damage, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.EliteDamage", pKey);
+		ret |= read(value.EliteDamage, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.BodyLength", pKey);
+		ret |= read(value.BodyLength, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.LazyCurve", pKey);
+		ret |= read(value.LazyCurve, parser, pSection, pFlagName);
+
+		_snprintf_s(pFlagName, 0x3F, "%s.Type", pKey);
+		ret |= read(value.Type, parser, pSection, pFlagName);
+
+		return ret;
+	}
+
+	template <>
+	inline bool read<Leptons>(Leptons& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		double buffer;
+		if(parser.ReadDouble(pSection, pKey, &buffer)) {
+			value = Leptons(Game::F2I(buffer * 256.0));
+			return true;
+		} else if(!parser.empty()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<OwnerHouseKind>(OwnerHouseKind& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			if(_strcmpi(parser.value(), "default") == 0) {
+				value = OwnerHouseKind::Default;
+			} else if(_strcmpi(parser.value(), "invoker") == 0) {
+				value = OwnerHouseKind::Invoker;
+			} else if(_strcmpi(parser.value(), "killer") == 0) {
+				value = OwnerHouseKind::Killer;
+			} else if(_strcmpi(parser.value(), "victim") == 0) {
+				value = OwnerHouseKind::Victim;
+			} else if(_strcmpi(parser.value(), "civilian") == 0) {
+				value = OwnerHouseKind::Civilian;
+			} else if(_strcmpi(parser.value(), "special") == 0) {
+				value = OwnerHouseKind::Special;
+			} else if(_strcmpi(parser.value(), "neutral") == 0) {
+				value = OwnerHouseKind::Neutral;
+			} else if(_strcmpi(parser.value(), "random") == 0) {
+				value = OwnerHouseKind::Random;
+			} else {
+				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a owner house kind");
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<Mission>(Mission& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			auto const mission = MissionControlClass::FindIndex(parser.value());
+			if(mission != Mission::None) {
+				value = mission;
+				return true;
+			} else if(!parser.empty()) {
+				Debug::INIParseFailed(pSection, pKey, parser.value(), "Invalid Mission name");
+			}
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<SuperWeaponAITargetingMode>(SuperWeaponAITargetingMode& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			static const auto Modes = {
+				"none", "nuke", "lightningstorm", "psychicdominator", "paradrop",
+				"geneticmutator", "forceshield", "notarget", "offensive", "stealth",
+				"self", "base", "multimissile", "hunterseeker", "enemybase" };
+
+			auto it = Modes.begin();
+			for(auto i = 0u; i < Modes.size(); ++i) {
+				if(_strcmpi(parser.value(), *it++) == 0) {
+					value = static_cast<SuperWeaponAITargetingMode>(i);
+					return true;
+				}
+			}
+
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a targeting mode");
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<SuperWeaponTarget>(SuperWeaponTarget& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			auto parsed = SuperWeaponTarget::None;
+
+			auto str = parser.value();
+			char* context = nullptr;
+			for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
+				if(!_strcmpi(cur, "land")) {
+					parsed |= SuperWeaponTarget::Land;
+				} else if(!_strcmpi(cur, "water")) {
+					parsed |= SuperWeaponTarget::Water;
+				} else if(!_strcmpi(cur, "empty")) {
+					parsed |= SuperWeaponTarget::NoContent;
+				} else if(!_strcmpi(cur, "infantry")) {
+					parsed |= SuperWeaponTarget::Infantry;
+				} else if(!_strcmpi(cur, "units")) {
+					parsed |= SuperWeaponTarget::Unit;
+				} else if(!_strcmpi(cur, "buildings")) {
+					parsed |= SuperWeaponTarget::Building;
+				} else if(!_strcmpi(cur, "all")) {
+					parsed |= SuperWeaponTarget::All;
+				} else if(_strcmpi(cur, "none")) {
+					Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon target");
+					return false;
+				}
+			}
+			value = parsed;
+			return true;
+		}
+		return false;
+	}
+
+	template <>
+	inline bool read<SuperWeaponAffectedHouse>(SuperWeaponAffectedHouse& value, INI_EX& parser, const char* pSection, const char* pKey, bool allocate) {
+		if(parser.ReadString(pSection, pKey)) {
+			auto parsed = SuperWeaponAffectedHouse::None;
+
+			auto str = parser.value();
+			char* context = nullptr;
+			for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
+				if(!_strcmpi(cur, "owner")) {
+					parsed |= SuperWeaponAffectedHouse::Owner;
+				} else if(!_strcmpi(cur, "allies")) {
+					parsed |= SuperWeaponAffectedHouse::Allies;
+				} else if(!_strcmpi(cur, "enemies")) {
+					parsed |= SuperWeaponAffectedHouse::Enemies;
+				} else if(!_strcmpi(cur, "team")) {
+					parsed |= SuperWeaponAffectedHouse::Team;
+				} else if(!_strcmpi(cur, "others")) {
+					parsed |= SuperWeaponAffectedHouse::NotOwner;
+				} else if(!_strcmpi(cur, "all")) {
+					parsed |= SuperWeaponAffectedHouse::All;
+				} else if(_strcmpi(cur, "none")) {
+					Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon affected house");
+					return false;
+				}
+			}
+			value = parsed;
+			return true;
+		}
+		return false;
+	}
+}
+
 
 // Valueable
 
 template <typename T>
 void Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		const char * val = parser.value();
-		auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val);
-		if(parsed || INIClass::IsBlank(val)) {
-			this->Set(parsed);
-		} else {
-			Debug::INIParseFailed(pSection, pKey, val);
-		}
+	T buffer;
+	if(detail::read(buffer, parser, pSection, pKey, Allocate)) {
+		this->Set(buffer);
 	}
-};
+}
 
 template <typename T>
 bool Valueable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
@@ -146,378 +519,6 @@ bool Promotable<T>::Save(AresStreamWriter &Stm) const {
 		&& Savegame::WriteAresStream(Stm, this->Elite);
 }
 
-
-// specializations
-
-template<>
-void Valueable<bool>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	bool buffer = this->Get();
-	if(parser.ReadBool(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
-	}
-};
-
-template<>
-void Valueable<int>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	int buffer = this->Get();
-	if(parser.ReadInteger(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
-	}
-};
-
-template<>
-void Valueable<BYTE>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	int buffer = this->Get();
-	if(parser.ReadInteger(pSection, pKey, &buffer)) {
-		if(buffer <= 255 && buffer >= 0) {
-			const BYTE result(static_cast<byte>(buffer)); // shut up shut up shut up C4244
-			this->Set(result);
-		} else {
-			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number between 0 and 255 inclusive.");
-		}
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
-	}
-};
-
-template<>
-void Valueable<float>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	double buffer = this->Get();
-	if(parser.ReadDouble(pSection, pKey, &buffer)) {
-		this->Set(static_cast<float>(buffer));
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
-	}
-};
-
-template<>
-void Valueable<double>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	double buffer = this->Get();
-	if(parser.ReadDouble(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
-	}
-};
-
-template<>
-void Valueable<ColorStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	ColorStruct buffer = this->Get();
-	if(parser.Read3Bytes(pSection, pKey, reinterpret_cast<byte*>(&buffer))) {
-		this->Set(buffer);
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid R,G,B color");
-	}
-};
-
-template<>
-void Valueable<CSFText>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		this->Set(CSFText(parser.value()));
-	}
-};
-
-template<>
-void Valueable<SHPStruct *>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		char flag[256];
-		const char * val = parser.value();
-		_snprintf_s(flag, 255, "%s.shp", val);
-		if(SHPStruct *image = FileSystem::LoadSHPFile(flag)) {
-			this->Set(image);
-		} else {
-			Debug::Log(Debug::Severity::Warning, "Failed to find file %s referenced by [%s]%s=%s\n", flag, pSection, pKey, val);
-			Debug::RegisterParserError();
-		}
-	}
-};
-
-template<>
-void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	Valueable<int> Placeholder;
-
-	MouseCursor *Cursor = this->GetEx();
-
-	// compact way to define the cursor in one go
-	if(parser.ReadString(pSection, pKey)) {
-		char *buffer = parser.value();
-		char *context = nullptr;
-		if(char *frame = strtok_s(buffer, Ares::readDelims, &context)) {
-			Parser<int>::Parse(frame, &Cursor->Frame);
-		}
-		if(char *count = strtok_s(nullptr, Ares::readDelims, &context)) {
-			Parser<int>::Parse(count, &Cursor->Count);
-		}
-		if(char *interval = strtok_s(nullptr, Ares::readDelims, &context)) {
-			Parser<int>::Parse(interval, &Cursor->Interval);
-		}
-		if(char *frame = strtok_s(nullptr, Ares::readDelims, &context)) {
-			Parser<int>::Parse(frame, &Cursor->MiniFrame);
-		}
-		if(char *count = strtok_s(nullptr, Ares::readDelims, &context)) {
-			Parser<int>::Parse(count, &Cursor->MiniCount);
-		}
-		if(char *hotx = strtok_s(nullptr, Ares::readDelims, &context)) {
-			MouseCursorHotSpotX::Parse(hotx, &Cursor->HotX);
-		}
-		if(char *hoty = strtok_s(nullptr, Ares::readDelims, &context)) {
-			MouseCursorHotSpotY::Parse(hoty, &Cursor->HotY);
-		}
-	}
-
-	char pFlagName[32];
-	_snprintf_s(pFlagName, 31, "%s.Frame", pKey);
-	Placeholder.Set(Cursor->Frame);
-	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Frame = Placeholder;
-
-	_snprintf_s(pFlagName, 31, "%s.Count", pKey);
-	Placeholder.Set(Cursor->Count);
-	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Count = Placeholder;
-
-	_snprintf_s(pFlagName, 31, "%s.Interval", pKey);
-	Placeholder.Set(Cursor->Interval);
-	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Interval = Placeholder;
-
-	_snprintf_s(pFlagName, 31, "%s.MiniFrame", pKey);
-	Placeholder.Set(Cursor->MiniFrame);
-	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->MiniFrame = Placeholder;
-
-	_snprintf_s(pFlagName, 31, "%s.MiniCount", pKey);
-	Placeholder.Set(Cursor->MiniCount);
-	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->MiniCount = Placeholder;
-
-	_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
-	if(parser.ReadString(pSection, pFlagName)) {
-		char *buffer = parser.value();
-		char *context = nullptr;
-		char *hotx = strtok_s(buffer, ",", &context);
-		MouseCursorHotSpotX::Parse(hotx, &Cursor->HotX);
-
-		if(char *hoty = strtok_s(nullptr, ",", &context)) {
-			MouseCursorHotSpotY::Parse(hoty, &Cursor->HotY);
-		}
-	}
-};
-
-template<>
-void Valueable<RocketStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	Valueable<bool> BoolPlaceholder;
-	Valueable<int> IntPlaceholder;
-	Valueable<float> FloatPlaceholder;
-	Valueable<AircraftTypeClass*> TypePlaceholder;
-
-	RocketStruct* rocket = this->GetEx();
-
-	char pFlagName[0x40];
-	_snprintf_s(pFlagName, 0x3F, "%s.PauseFrames", pKey);
-	IntPlaceholder.Set(rocket->PauseFrames);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PauseFrames = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.TiltFrames", pKey);
-	IntPlaceholder.Set(rocket->TiltFrames);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->TiltFrames = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.PitchInitial", pKey);
-	FloatPlaceholder.Set(rocket->PitchInitial);
-	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PitchInitial = FloatPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.PitchFinal", pKey);
-	FloatPlaceholder.Set(rocket->PitchFinal);
-	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PitchFinal = FloatPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.TurnRate", pKey);
-	FloatPlaceholder.Set(rocket->TurnRate);
-	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->TurnRate = FloatPlaceholder;
-
-	// sic! integer read like a float.
-	_snprintf_s(pFlagName, 0x3F, "%s.RaiseRate", pKey);
-	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
-	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->RaiseRate = Game::F2I(FloatPlaceholder);
-
-	_snprintf_s(pFlagName, 0x3F, "%s.Acceleration", pKey);
-	FloatPlaceholder.Set(rocket->Acceleration);
-	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Acceleration = FloatPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.Altitude", pKey);
-	IntPlaceholder.Set(rocket->Altitude);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Altitude = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.Damage", pKey);
-	IntPlaceholder.Set(rocket->Damage);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Damage = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.EliteDamage", pKey);
-	IntPlaceholder.Set(rocket->EliteDamage);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->EliteDamage = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.BodyLength", pKey);
-	IntPlaceholder.Set(rocket->BodyLength);
-	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->BodyLength = IntPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.LazyCurve", pKey);
-	BoolPlaceholder.Set(rocket->LazyCurve);
-	BoolPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->LazyCurve = BoolPlaceholder;
-
-	_snprintf_s(pFlagName, 0x3F, "%s.Type", pKey);
-	TypePlaceholder.Set(rocket->Type);
-	TypePlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Type = TypePlaceholder;
-};
-
-template <>
-void Valueable<Leptons>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool) {
-	double buffer = this->Get() / 256.0;
-	if(parser.ReadDouble(pSection, pKey, &buffer)) {
-		this->Set(Leptons(Game::F2I(buffer * 256.0)));
-	} else if(!parser.empty()) {
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
-	}
-}
-
-template<>
-void Valueable<OwnerHouseKind>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		auto value = this->Get();
-
-		if(_strcmpi(parser.value(), "default") == 0) {
-			value = OwnerHouseKind::Default;
-		} else if(_strcmpi(parser.value(), "invoker") == 0) {
-			value = OwnerHouseKind::Invoker;
-		} else if(_strcmpi(parser.value(), "killer") == 0) {
-			value = OwnerHouseKind::Killer;
-		} else if(_strcmpi(parser.value(), "victim") == 0) {
-			value = OwnerHouseKind::Victim;
-		} else if(_strcmpi(parser.value(), "civilian") == 0) {
-			value = OwnerHouseKind::Civilian;
-		} else if(_strcmpi(parser.value(), "special") == 0) {
-			value = OwnerHouseKind::Special;
-		} else if(_strcmpi(parser.value(), "neutral") == 0) {
-			value = OwnerHouseKind::Neutral;
-		} else if(_strcmpi(parser.value(), "random") == 0) {
-			value = OwnerHouseKind::Random;
-		} else {
-			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a owner house kind");
-			return;
-		}
-
-		this->Set(value);
-	}
-}
-
-template<>
-void Valueable<Mission>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		auto value = MissionControlClass::FindIndex(parser.value());
-		if(value != Mission::None) {
-			this->Set(value);
-		} else if(!parser.empty()) {
-			Debug::INIParseFailed(pSection, pKey, parser.value(), "Invalid Mission name");
-		}
-	}
-}
-
-template<>
-void Valueable<SuperWeaponAITargetingMode>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		static const auto Modes = {
-			"none", "nuke", "lightningstorm", "psychicdominator", "paradrop",
-			"geneticmutator", "forceshield", "notarget", "offensive", "stealth",
-			"self", "base", "multimissile", "hunterseeker", "enemybase"};
-
-		auto it = Modes.begin();
-		for(size_t i = 0; i < Modes.size(); ++i) {
-			if(_strcmpi(parser.value(), *it++) == 0) {
-				this->Set(static_cast<SuperWeaponAITargetingMode>(i));
-				return;
-			}
-		}
-
-		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a targeting mode");
-	}
-}
-
-template<>
-void Valueable<SuperWeaponTarget>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		auto value = SuperWeaponTarget::None;
-
-		auto str = parser.value();
-		char* context = nullptr;
-		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if(!_strcmpi(cur, "land")) {
-				value |= SuperWeaponTarget::Land;
-			} else if(!_strcmpi(cur, "water")) {
-				value |= SuperWeaponTarget::Water;
-			} else if(!_strcmpi(cur, "empty")) {
-				value |= SuperWeaponTarget::NoContent;
-			} else if(!_strcmpi(cur, "infantry")) {
-				value |= SuperWeaponTarget::Infantry;
-			} else if(!_strcmpi(cur, "units")) {
-				value |= SuperWeaponTarget::Unit;
-			} else if(!_strcmpi(cur, "buildings")) {
-				value |= SuperWeaponTarget::Building;
-			} else if(!_strcmpi(cur, "all")) {
-				value |= SuperWeaponTarget::All;
-			} else if(_strcmpi(cur, "none")) {
-				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon target");
-				return;
-			}
-		}
-
-		this->Set(value);
-	}
-}
-
-template<>
-void Valueable<SuperWeaponAffectedHouse>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser.ReadString(pSection, pKey)) {
-		auto value = SuperWeaponAffectedHouse::None;
-
-		auto str = parser.value();
-		char* context = nullptr;
-		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if(!_strcmpi(cur, "owner")) {
-				value |= SuperWeaponAffectedHouse::Owner;
-			} else if(!_strcmpi(cur, "allies")) {
-				value |= SuperWeaponAffectedHouse::Allies;
-			} else if(!_strcmpi(cur, "enemies")) {
-				value |= SuperWeaponAffectedHouse::Enemies;
-			} else if(!_strcmpi(cur, "team")) {
-				value |= SuperWeaponAffectedHouse::Team;
-			} else if(!_strcmpi(cur, "others")) {
-				value |= SuperWeaponAffectedHouse::NotOwner;
-			} else if(!_strcmpi(cur, "all")) {
-				value |= SuperWeaponAffectedHouse::All;
-			} else if(_strcmpi(cur, "none")) {
-				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon affected house");
-				return;
-			}
-		}
-
-		this->Set(value);
-	}
-}
 
 // ValueableVector
 
