@@ -183,6 +183,8 @@ public:
 		this->HasValue = false;
 	}
 
+	inline void Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate = false);
+
 	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
 	inline virtual bool Save(AresStreamWriter &Stm) const;

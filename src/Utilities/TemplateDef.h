@@ -398,10 +398,7 @@ namespace detail {
 
 template <typename T>
 void Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	T buffer;
-	if(detail::read(buffer, parser, pSection, pKey, Allocate)) {
-		this->Set(buffer);
-	}
+	detail::read(this->Value, parser, pSection, pKey, Allocate);
 }
 
 template <typename T>
@@ -432,6 +429,13 @@ void ValueableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const ch
 
 
 // Nullable
+
+template <typename T>
+void Nullable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(detail::read(this->Value, parser, pSection, pKey, Allocate)) {
+		this->HasValue = true;
+	}
+}
 
 template <typename T>
 bool Nullable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
