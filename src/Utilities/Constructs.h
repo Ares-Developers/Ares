@@ -330,12 +330,14 @@ private:
 // provides storage for a csf label with automatic lookup.
 class CSFText {
 public:
-	CSFText() noexcept {};
-	CSFText(nullptr_t) noexcept {}
+	CSFText() noexcept {}
+	explicit CSFText(nullptr_t) noexcept {}
 
 	explicit CSFText(const char* label) noexcept {
 		*this = label;
 	}
+
+	CSFText& operator = (CSFText const& rhs) = default;
 
 	const CSFText& operator = (const char* label) {
 		if(this->Label != label) {
@@ -345,15 +347,6 @@ public:
 			if(this->Label) {
 				this->Text = StringTable::LoadString(this->Label);
 			}
-		}
-
-		return *this;
-	}
-
-	const CSFText& operator = (const CSFText& other) {
-		if(this != &other) {
-			this->Label = other.Label;
-			this->Text = other.Text;
 		}
 
 		return *this;
