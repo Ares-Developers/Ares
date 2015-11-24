@@ -72,14 +72,6 @@ public:
 		return &this->Value;
 	}
 
-	virtual void Set(const T& val) {
-		this->Value = val;
-	}
-
-	virtual void SetEx(T* val) {
-		this->Value = *val;
-	}
-
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate = false);
 
 	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
@@ -166,16 +158,6 @@ public:
 
 	const T* GetEx(const T* default) const noexcept {
 		return this->isset() ? this->GetEx() : default;
-	}
-
-	virtual void Set(const T& val) override final {
-		this->Value = val;
-		this->HasValue = true;
-	}
-
-	virtual void SetEx(T* val) override final {
-		this->Value = *val;
-		this->HasValue = true;
 	}
 
 	void Reset() {
