@@ -160,7 +160,7 @@ void HouseTypeExt::ExtData::InitializeConstants() {
 		pTauntFile = "taunts\\tauyu%02i.wav";
 		pObserverBackgroundSHP = "obsyuri.shp";
 		pObserverFlagSHP = "yrii.shp";
-		ObserverFlagYuriPAL = true;
+		bObserverFlagYuriPAL = true;
 		break;
 	default: //Unknown
 		pFlagFile = "rani.pcx";
