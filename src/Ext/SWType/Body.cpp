@@ -70,10 +70,10 @@ void SWTypeExt::ExtData::InitializeConstants()
 	Cursor->HotX = MouseHotSpotX::Center;
 	Cursor->HotY = MouseHotSpotY::Middle;
 
-	this->Text_Ready = CSFText("TXT_READY");
-	this->Text_Hold = CSFText("TXT_HOLD");
-	this->Text_Charging = CSFText("TXT_CHARGING");
-	this->Text_Active = CSFText("TXT_FIRESTORM_ON");
+	this->Text_Ready = "TXT_READY";
+	this->Text_Hold = "TXT_HOLD";
+	this->Text_Charging = "TXT_CHARGING";
+	this->Text_Active = "TXT_FIRESTORM_ON";
 
 	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
 	EVA_SelectTarget = VoxClass::FindIndex("EVA_SelectTarget");

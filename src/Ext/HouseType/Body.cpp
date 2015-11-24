@@ -175,12 +175,12 @@ void HouseTypeExt::ExtData::InitializeConstants() {
 
 	// apply the defaults
 	this->FlagFile = pFlagFile;
-	this->LoadScreenBrief = CSFText(pLoadScreenBrief);
+	this->LoadScreenBrief = pLoadScreenBrief;
 	this->LoadScreenBackground = pLoadScreenBackground;
-	this->LoadScreenName = CSFText(pLoadScreenName);
+	this->LoadScreenName = pLoadScreenName;
 	this->LoadScreenPalette = pLoadScreenPalette;
-	this->LoadScreenSpecialName = CSFText(pLoadScreenSpecialName);
-	this->StatusText = CSFText(pStatusText);
+	this->LoadScreenSpecialName = pLoadScreenSpecialName;
+	this->StatusText = pStatusText;
 	this->TauntFile = pTauntFile;
 
 	if(pObserverBackgroundSHP) {
@@ -323,8 +323,8 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->ObserverFlagSHP = ParentData->ObserverFlagSHP;
 			this->ObserverFlagYuriPAL = ParentData->ObserverFlagYuriPAL;
 
-			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
-			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
+			this->ParaDropPlane = ParentData->ParaDropPlane;
+			this->Parachute_Anim = ParentData->Parachute_Anim;
 
 			this->Powerplants = ParentData->Powerplants;
 			this->ParaDropTypes = ParentData->ParaDropTypes;

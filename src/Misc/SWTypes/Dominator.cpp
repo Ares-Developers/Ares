@@ -51,7 +51,7 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicDominatorReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_PsychicDominatorActivated");
 
-	pData->Message_Abort = CSFText("Msg:DominatorActive");
+	pData->Message_Abort = "Msg:DominatorActive";
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::PsychicDominator;
 	pData->SW_AffectsTarget = SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit;

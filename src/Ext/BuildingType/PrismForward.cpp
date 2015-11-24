@@ -87,7 +87,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		
 		if(this->ChargeDelay < 1) {
 			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, this->ChargeDelay.Get());
-			this->ChargeDelay.Set(1);
+			this->ChargeDelay = 1;
 		}
 
 		auto SuperWH = RulesClass::Instance->C4Warhead;

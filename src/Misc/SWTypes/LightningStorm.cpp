@@ -49,9 +49,9 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_LightningStormReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_LightningStormCreated");
 
-	pData->Message_Launch = CSFText("TXT_LIGHTNING_STORM_APPROACHING");
-	pData->Message_Activate = CSFText("TXT_LIGHTNING_STORM");
-	pData->Message_Abort = CSFText("Msg:LightningStormActive");
+	pData->Message_Launch = "TXT_LIGHTNING_STORM_APPROACHING";
+	pData->Message_Activate = "TXT_LIGHTNING_STORM";
+	pData->Message_Abort = "Msg:LightningStormActive";
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::LightningStorm;
 	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::LightningStorm);
