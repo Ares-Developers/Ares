@@ -583,18 +583,6 @@ bool ValueableVector<T>::Save(AresStreamWriter &Stm) const {
 	return false;
 }
 
-// specializations
-
-template<>
-void ValueableVector<TechnoTypeClass *>::Parse(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
-	// ...against the various object types; if we find one, place it in the value list
-	if(auto const pType = TechnoTypeClass::Find(pValue)) {
-		this->push_back(pType);
-	} else if(!INIClass::IsBlank(pValue)) {
-		Debug::INIParseFailed(pSection, pKey, pValue);
-	}
-}
-
 
 // NullableVector
 
