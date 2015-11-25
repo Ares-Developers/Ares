@@ -253,7 +253,7 @@ public:
 
 	virtual ~ValueableVector() = default;
 
-	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey);
+	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 
 	bool Contains(const T &other) const {
 		return std::find(this->begin(), this->end(), other) != this->end();
@@ -275,9 +275,9 @@ public:
 		return Iterator<T>(*this);
 	}
 
-	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+	inline bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
-	inline virtual bool Save(AresStreamWriter &Stm) const;
+	inline bool Save(AresStreamWriter &Stm) const;
 
 protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
@@ -292,7 +292,7 @@ protected:
 public:
 	NullableVector() noexcept = default;
 
-	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override final;
+	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 
 	bool HasValue() const noexcept {
 		return this->hasValue;
@@ -308,9 +308,9 @@ public:
 		return this->GetElements();
 	}
 
-	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+	inline bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
-	inline virtual bool Save(AresStreamWriter &Stm) const;
+	inline bool Save(AresStreamWriter &Stm) const;
 };
 
 template<typename Lookuper>
