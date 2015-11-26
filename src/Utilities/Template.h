@@ -243,8 +243,6 @@ public:
 
 template<class T>
 class ValueableVector : public std::vector<T> {
-protected:
-	bool defined{ false };
 public:
 	using value_type = T;
 	using base_type = std::remove_pointer_t<T>;
@@ -265,10 +263,6 @@ public:
 			return it - this->begin();
 		}
 		return -1;
-	}
-
-	bool Defined() const noexcept {
-		return this->defined;
 	}
 
 	Iterator<T> GetElements() const noexcept {

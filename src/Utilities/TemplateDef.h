@@ -524,7 +524,6 @@ template <typename T>
 void __declspec(noinline) ValueableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
-		this->defined = true;
 		this->Split(parser, pSection, pKey, Ares::readBuffer);
 	}
 }
@@ -564,7 +563,7 @@ bool ValueableVector<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
 				Swizzle swizzle(this->back());
 			}
 		}
-		return Savegame::ReadAresStream(Stm, this->defined);
+		return true;
 	}
 	return false;
 }
@@ -578,7 +577,7 @@ bool ValueableVector<T>::Save(AresStreamWriter &Stm) const {
 				return false;
 			}
 		}
-		return Savegame::WriteAresStream(Stm, this->defined);
+		return true;
 	}
 	return false;
 }
@@ -590,7 +589,6 @@ template <typename T>
 void __declspec(noinline) NullableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
-		this->defined = true;
 
 		// provide a way to reset to default
 		if(!_strcmpi(Ares::readBuffer, "<default>")) {
@@ -605,7 +603,6 @@ void __declspec(noinline) NullableVector<T>::Read(INI_EX &parser, const char* pS
 template <typename T>
 bool NullableVector<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
 	this->clear();
-	this->defined = false;
 	if(Savegame::ReadAresStream(Stm, this->hasValue, RegisterForChange)) {
 		return !this->hasValue || ValueableVector<T>::Load(Stm, RegisterForChange);
 	}
