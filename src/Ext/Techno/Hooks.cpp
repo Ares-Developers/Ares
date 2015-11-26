@@ -1210,7 +1210,7 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 
 	// remember which occupation bit we set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->AltOccupation.Set(alt);
+	pExt->AltOccupation = alt;
 
 	if(alt) {
 		pCell->AltOccupationFlags |= 0x20;
@@ -1234,10 +1234,10 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 
 	// also clear the last occupation bit, if set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	if(pExt->AltOccupation.isset()) {
+	if(!pExt->AltOccupation.empty()) {
 		int lastAlt = pExt->AltOccupation ? obAlt : obNormal;
 		alt |= lastAlt;
-		pExt->AltOccupation.Reset();
+		pExt->AltOccupation.clear();
 	}
 
 	if(alt & obAlt) {

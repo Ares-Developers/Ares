@@ -82,7 +82,7 @@ public:
 
 		BuildingLightClass* Spotlight;
 
-		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
+		OptionalStruct<bool, true> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
 		bool PayloadCreated;
 
