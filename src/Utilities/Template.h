@@ -249,8 +249,6 @@ public:
 
 	ValueableVector() noexcept = default;
 
-	virtual ~ValueableVector() = default;
-
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 
 	bool Contains(const T &other) const {
@@ -272,11 +270,6 @@ public:
 	inline bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
 	inline bool Save(AresStreamWriter &Stm) const;
-
-protected:
-	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
-
-	inline void Parse(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
 };
 
 template<class T>
@@ -308,13 +301,13 @@ public:
 };
 
 template<typename Lookuper>
-class ValueableIdxVector final : public ValueableVector<int> {
-protected:
-	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
+class ValueableIdxVector : public ValueableVector<int> {
+public:
+	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
 
 template<typename Lookuper>
-class NullableIdxVector final : public NullableVector<int> {
-protected:
-	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
+class NullableIdxVector : public NullableVector<int> {
+public:
+	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };

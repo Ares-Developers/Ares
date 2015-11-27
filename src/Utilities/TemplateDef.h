@@ -391,6 +391,32 @@ namespace detail {
 		}
 		return false;
 	}
+
+	template <typename T>
+	void parse_values(std::vector<T>& vector, INI_EX &parser, const char* pSection, const char* pKey) {
+		char* context = nullptr;
+		for(auto pCur = strtok_s(parser.value(), Ares::readDelims, &context); pCur; pCur = strtok_s(nullptr, Ares::readDelims, &context)) {
+			T buffer = T();
+			if(Parser<T>::Parse(pCur, &buffer)) {
+				vector.push_back(buffer);
+			} else if(!INIClass::IsBlank(pCur)) {
+				Debug::INIParseFailed(pSection, pKey, pCur);
+			}
+		}
+	}
+
+	template <typename Lookuper, typename T>
+	void parse_indexes(std::vector<T>& vector, INI_EX &parser, const char* pSection, const char* pKey) {
+		char* context = nullptr;
+		for(auto pCur = strtok_s(parser.value(), Ares::readDelims, &context); pCur; pCur = strtok_s(nullptr, Ares::readDelims, &context)) {
+			int idx = Lookuper::FindIndex(pCur);
+			if(idx != -1) {
+				vector.push_back(idx);
+			} else if(!INIClass::IsBlank(pCur)) {
+				Debug::INIParseFailed(pSection, pKey, pCur);
+			}
+		}
+	}
 }
 
 
@@ -524,26 +550,7 @@ template <typename T>
 void __declspec(noinline) ValueableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
-		this->Split(parser, pSection, pKey, Ares::readBuffer);
-	}
-}
-
-template <typename T>
-void ValueableVector<T>::Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
-	// if we were able to get the flag in question, take it apart and check the tokens...
-	char* context = nullptr;
-	for(char *cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-		Parse(parser, pSection, pKey, cur);
-	}
-}
-
-template <typename T>
-void ValueableVector<T>::Parse(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
-	T buffer = T();
-	if(Parser<T>::Parse(pValue, &buffer)) {
-		this->push_back(buffer);
-	} else if(!INIClass::IsBlank(pValue)) {
-		Debug::INIParseFailed(pSection, pKey, pValue);
+		detail::parse_values<T>(*this, parser, pSection, pKey);
 	}
 }
 
@@ -590,12 +597,11 @@ void __declspec(noinline) NullableVector<T>::Read(INI_EX &parser, const char* pS
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
 
-		// provide a way to reset to default
-		if(!_strcmpi(Ares::readBuffer, "<default>")) {
-			this->hasValue = false;
-		} else {
-			this->hasValue = true;
-			this->Split(parser, pSection, pKey, Ares::readBuffer);
+		auto const non_default = _strcmpi(parser.value(), "<default>") != 0;
+		this->hasValue = non_default;
+
+		if(non_default) {
+			detail::parse_values<T>(*this, parser, pSection, pKey);
 		}
 	}
 }
@@ -621,16 +627,10 @@ bool NullableVector<T>::Save(AresStreamWriter &Stm) const {
 // ValueableIdxVector
 
 template <typename Lookuper>
-void ValueableIdxVector<Lookuper>::Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
-	// split the string and look up the tokens. only valid tokens are added.
-	char* context = nullptr;
-	for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-		int idx = Lookuper::FindIndex(cur);
-		if(idx != -1) {
-			this->push_back(idx);
-		} else if(!INIClass::IsBlank(cur)) {
-			Debug::INIParseFailed(pSection, pKey, cur);
-		}
+void __declspec(noinline) ValueableIdxVector<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+	if(parser.ReadString(pSection, pKey)) {
+		this->clear();
+		detail::parse_indexes<Lookuper>(*this, parser, pSection, pKey);
 	}
 }
 
@@ -638,15 +638,15 @@ void ValueableIdxVector<Lookuper>::Split(INI_EX &parser, const char* pSection, c
 // NullableIdxVector
 
 template <typename Lookuper>
-void NullableIdxVector<Lookuper>::Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
-	// split the string and look up the tokens. only valid tokens are added.
-	char* context = nullptr;
-	for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-		int idx = Lookuper::FindIndex(cur);
-		if(idx != -1) {
-			this->push_back(idx);
-		} else if(!INIClass::IsBlank(cur)) {
-			Debug::INIParseFailed(pSection, pKey, cur);
+void __declspec(noinline) NullableIdxVector<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+	if(parser.ReadString(pSection, pKey)) {
+		this->clear();
+
+		auto const non_default = _strcmpi(parser.value(), "<default>") != 0;
+		this->hasValue = non_default;
+
+		if(non_default) {
+			detail::parse_indexes<Lookuper>(*this, parser, pSection, pKey);
 		}
 	}
 }
