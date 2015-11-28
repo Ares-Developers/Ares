@@ -34,7 +34,7 @@ DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
 	}
 
 	// these effects should be applied no matter what happens to the target
-	pWHExt->applyRipples(*pCoordsDetonation);
+	pWHExt->applyRipples(coords);
 
 	bool targetStillOnMap = true;
 	if(snapped) {
