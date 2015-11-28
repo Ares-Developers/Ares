@@ -103,17 +103,22 @@ void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *p
 		return pPlane;
 	};
 
-	auto GetParadropPlane = [=, &base](char *pID, int defCount, std::vector<ParadropPlane*> &ret) {
+	auto GetParadropPlane = [=, &base](char const* pID, size_t defaultCount, AbstractTypeClass* pKey) {
+		auto const existed = pData->ParaDrop.contains(pKey);
+		auto& ParaDrop = pData->ParaDrop[pKey];
+
+		auto const lastCount = existed ? ParaDrop.size() : defaultCount;
+
 		// get the number of planes for this house or side
 		char key[0x40];
 		_snprintf_s(key, 0x3F, "%s.Count", pID);
-		int count = pINI->ReadInteger(section, key, defCount);
+		int count = pINI->ReadInteger(section, key, lastCount);
 
 		// parse every plane
-		ret.resize(count, nullptr);
+		ParaDrop.resize(count, nullptr);
 		for(int i=0; i<count; ++i) {
 			if(auto pPlane = ParseParaDrop(base, i)) {
-				ret[i] = pPlane.get();
+				ParaDrop[i] = pPlane.get();
 				pData->ParaDropPlanes.push_back(std::move(pPlane));
 			}
 		}
@@ -126,20 +131,20 @@ void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *p
 
 	// default
 	CreateParaDropBase(nullptr, base, sizeof(base));
-	GetParadropPlane(base, 1, pData->ParaDrop[nullptr]);
+	GetParadropPlane(base, 1, nullptr);
 
 	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
 		CreateParaDropBase(pSide->ID, base, sizeof(base));
-		GetParadropPlane(base, pData->ParaDrop[nullptr].size(), pData->ParaDrop[pSide]);
+		GetParadropPlane(base, pData->ParaDrop[nullptr].size(), pSide);
 	}
 
 	// put all countries into the hash table
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
 		CreateParaDropBase(pTHouse->ID, base, sizeof(base));
-		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].size(), pData->ParaDrop[pTHouse]);
+		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].size(), pTHouse);
 	}
 }
 
