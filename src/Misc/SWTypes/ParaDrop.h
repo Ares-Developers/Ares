@@ -16,6 +16,6 @@ public:
 	bool SendParadrop(SuperClass* pThis, CellClass* pCell);
 
 	static void SendPDPlane(HouseClass* pOwner, CellClass* pDestination,
-		AircraftTypeClass* pPlaneType, const Iterator<TechnoTypeClass*> &Types,
-		const Iterator<int> &Nums);
+		AircraftTypeClass* pPlaneType, Iterator<TechnoTypeClass*> Types,
+		Iterator<int> Nums);
 };
