@@ -6,10 +6,10 @@
 template<typename T>
 class Iterator {
 private:
-	const T* items;
-	size_t count;
+	const T* items{ nullptr };
+	size_t count{ 0 };
 public:
-	Iterator() : items(nullptr), count(0) {}
+	Iterator() = default;
 	Iterator(const T* first, size_t count) : items(first), count(count) {}
 	Iterator(const std::vector<T> &vec) : items(vec.data()), count(vec.size()) {}
 	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(static_cast<size_t>(vec.Capacity)) {}
