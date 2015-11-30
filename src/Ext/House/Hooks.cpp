@@ -70,17 +70,14 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 		return 0x4F8F87;
 	}
 
-	auto Eligible = [pThis](TechnoClass* pTechno) {
-		if(pTechno->Owner != pThis) {
+	auto Eligible = [pThis](FootClass* pFoot) {
+		if(pFoot->Owner != pThis) {
 			return false;
 		}
-		if(!pTechno->InLimbo) {
+		if(!pFoot->InLimbo) {
 			return true;
 		}
-		if(auto pFoot = generic_cast<FootClass*>(pTechno)) {
-			return pFoot->ParasiteImUsing != nullptr;
-		}
-		return false;
+		return pFoot->ParasiteImUsing != nullptr;
 	};
 
 	if(GameModeOptionsClass::Instance->ShortGame) {
