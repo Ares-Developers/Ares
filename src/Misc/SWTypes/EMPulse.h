@@ -5,9 +5,6 @@
 class SW_EMPulse : public NewSWType
 {
 public:
-	SW_EMPulse() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "EMPulse";

@@ -5,9 +5,6 @@
 class SW_ChronoWarp : public NewSWType
 {
 public:
-	SW_ChronoWarp() : NewSWType()
-		{ };
-
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 	virtual bool HandlesType(SuperWeaponType type) const override;

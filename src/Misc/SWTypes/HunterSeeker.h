@@ -5,9 +5,6 @@
 class SW_HunterSeeker : public NewSWType
 {
 public:
-	SW_HunterSeeker() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "HunterSeeker";

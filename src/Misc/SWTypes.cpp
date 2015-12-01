@@ -29,12 +29,12 @@
 
 #pragma region TargetingData definitions
 
-TargetingData::TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner)
+TargetingData::TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner) noexcept
 	: TypeExt(pTypeExt), Owner(pOwner),
 	NeedsLaunchSite(false), NeedsDesignator(false)
 { }
 
-TargetingData::~TargetingData() = default;
+TargetingData::~TargetingData() noexcept = default;
 
 #pragma endregion
 

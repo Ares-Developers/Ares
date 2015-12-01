@@ -5,9 +5,6 @@
 class SW_UnitDelivery : public NewSWType
 {
 public:
-	SW_UnitDelivery() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "UnitDelivery";

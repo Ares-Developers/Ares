@@ -5,9 +5,6 @@
 class SW_Protect : public NewSWType
 {
 public:
-	SW_Protect() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "Protect";

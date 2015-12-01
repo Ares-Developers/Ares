@@ -5,9 +5,6 @@
 class SW_SonarPulse : public NewSWType
 {
 public:
-	SW_SonarPulse() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "SonarPulse";

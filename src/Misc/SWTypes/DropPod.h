@@ -5,9 +5,6 @@
 class SW_DropPod : public NewSWType
 {
 public:
-	SW_DropPod() : NewSWType()
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "DropPod";

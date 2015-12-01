@@ -5,9 +5,6 @@
 class SW_PsychicDominator : public NewSWType
 {
 public:
-	SW_PsychicDominator() : NewSWType()
-		{ };
-
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) override;

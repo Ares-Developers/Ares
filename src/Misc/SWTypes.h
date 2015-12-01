@@ -17,8 +17,8 @@ enum class SWStateMachineIdentifier : unsigned int {
 class SWTypeExt;
 
 struct TargetingData {
-	TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner);
-	~TargetingData();
+	TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner) noexcept;
+	~TargetingData() noexcept;
 
 	struct LaunchSite
 	{
@@ -50,15 +50,12 @@ class NewSWType
 
 	static void Register(std::unique_ptr<NewSWType> pType) {
 		pType->SetTypeIndex(static_cast<int>(Array.size()));
-		Array.push_back(std::move(pType));
+		Array.emplace_back(std::move(pType));
 	}
 
-	int TypeIndex;
+	int TypeIndex{ -1 };
 
 public:
-	NewSWType() : TypeIndex(-1) {
-	}
-
 	virtual ~NewSWType() = default;
 
 	std::unique_ptr<const TargetingData> GetTargetingData(SWTypeExt::ExtData* pSWType, HouseClass* pOwner) const;
