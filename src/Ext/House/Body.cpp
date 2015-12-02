@@ -206,14 +206,12 @@ int HouseExt::CountOwnedNowTotal(
 
 signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
-	int BuildLimit = pItem->BuildLimit;
+	auto const BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
-		BuildLimit -= HouseExt::CountOwnedNowTotal(pHouse, pItem);
+		return BuildLimit - HouseExt::CountOwnedNowTotal(pHouse, pItem);
 	} else {
-		BuildLimit = std::abs(BuildLimit);
-		BuildLimit -= pHouse->CountOwnedEver(pItem);
+		return -BuildLimit - pHouse->CountOwnedEver(pItem);
 	}
-	return std::min(BuildLimit, 0x7FFFFFFF);
 }
 
 signed int HouseExt::PrereqValidate
