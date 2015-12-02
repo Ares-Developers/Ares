@@ -135,6 +135,16 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	;
 }
 
+signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
+{
+	auto const BuildLimit = pItem->BuildLimit;
+	if(BuildLimit >= 0) {
+		return BuildLimit - HouseExt::CountOwnedNowTotal(pHouse, pItem);
+	} else {
+		return -BuildLimit - pHouse->CountOwnedEver(pItem);
+	}
+}
+
 int HouseExt::CountOwnedNowTotal(
 	HouseClass* const pHouse, TechnoTypeClass const* const pItem)
 {
@@ -202,16 +212,6 @@ int HouseExt::CountOwnedNowTotal(
 	}
 
 	return sum;
-}
-
-signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
-{
-	auto const BuildLimit = pItem->BuildLimit;
-	if(BuildLimit >= 0) {
-		return BuildLimit - HouseExt::CountOwnedNowTotal(pHouse, pItem);
-	} else {
-		return -BuildLimit - pHouse->CountOwnedEver(pItem);
-	}
 }
 
 signed int HouseExt::PrereqValidate
