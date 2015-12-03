@@ -587,9 +587,12 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	return false;
 }
 
-bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
-	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
-	return (this->BuiltAt.empty() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
+bool TechnoTypeExt::ExtData::CanBeBuiltAt(
+	BuildingTypeClass const* const pFactoryType) const
+{
+	auto const pBExt = BuildingTypeExt::ExtMap.Find(pFactoryType);
+	return (this->BuiltAt.empty() && !pBExt->Factory_ExplicitOnly)
+		|| this->BuiltAt.Contains(pFactoryType);
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {

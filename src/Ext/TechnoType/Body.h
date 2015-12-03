@@ -160,7 +160,7 @@ public:
 		//issue #1623
 		AttachEffectTypeClass AttachedTechnoEffect; //The AttachedEffect which should been on the Techno from the start.
 
-		ValueableVector<BuildingTypeClass *> BuiltAt;
+		ValueableVector<BuildingTypeClass const*> BuiltAt;
 		Valueable<bool> Cloneable;
 		ValueableVector<BuildingTypeClass *> ClonedAt;
 
@@ -382,7 +382,7 @@ public:
 
 		bool CameoIsElite();
 
-		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
+		bool CanBeBuiltAt(BuildingTypeClass const* pFactoryType) const;
 
 		bool CarryallCanLift(UnitClass * Target);
 
