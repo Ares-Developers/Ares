@@ -145,7 +145,7 @@ public:
 
 		AresFixedString<0x20> GroupAs;
 
-		AresMap<HouseClass*, bool> ReversedByHouses;
+		AresMap<HouseClass const*, bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
 
 		// issue #305
