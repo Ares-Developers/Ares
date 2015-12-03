@@ -33,7 +33,8 @@ std::vector<int> HouseExt::AIProduction_BestChoices;
 // =============================
 // member funcs
 
-HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
+HouseExt::RequirementStatus HouseExt::RequirementsMet(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	if(pItem->Unbuildable) {
 		return RequirementStatus::Forbidden;
@@ -74,7 +75,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return RequirementStatus::Incomplete; }
 
-	if(auto const pBldType = specific_cast<BuildingTypeClass*>(pItem)) {
+	if(auto const pBldType = specific_cast<BuildingTypeClass const*>(pItem)) {
 		if(HouseExt::IsDisabledFromShell(pHouse, pBldType)) {
 			return RequirementStatus::Forbidden;
 		}
@@ -83,13 +84,14 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	return (pHouse->TechLevel >= pItem->TechLevel) ? RequirementStatus::Complete : RequirementStatus::Incomplete;
 }
 
-bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
+bool HouseExt::PrerequisitesMet(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	if(!pItem) {
 		return false;
 	}
 
-	auto pData = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(const auto& list : pData->PrerequisiteLists) {
 		if(Prereqs::HouseOwnsAll(pHouse, list)) {
@@ -100,13 +102,14 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	return false;
 }
 
-bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem)
+bool HouseExt::PrerequisitesListed(
+	Prereqs::BTypeIter const& List, TechnoTypeClass const* const pItem)
 {
 	if(!pItem) {
 		return false;
 	}
 
-	auto pData = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(const auto& list : pData->PrerequisiteLists) {
 		if(Prereqs::ListContainsAll(List, list)) {
@@ -117,13 +120,15 @@ bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeCla
 	return false;
 }
 
-HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued)
+HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem,
+	bool const includeQueued)
 {
 	int BuildLimit = pItem->BuildLimit;
 	int Remaining = HouseExt::BuildLimitRemaining(pHouse, pItem);
 	if(BuildLimit > 0) {
 		if(Remaining <= 0) {
-			return (IncludeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
+			return (includeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
 				? BuildLimitStatus::NotReached
 				: BuildLimitStatus::ReachedPermanently
 			;
@@ -135,7 +140,8 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	;
 }
 
-signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
+signed int HouseExt::BuildLimitRemaining(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	auto const BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
@@ -146,7 +152,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 }
 
 int HouseExt::CountOwnedNowTotal(
-	HouseClass* const pHouse, TechnoTypeClass const* const pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	int index = -1;
 	int sum = 0;
@@ -214,10 +220,11 @@ int HouseExt::CountOwnedNowTotal(
 	return sum;
 }
 
-signed int HouseExt::PrereqValidate
-	(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued)
+signed int HouseExt::PrereqValidate(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem,
+	bool const buildLimitOnly, bool const includeQueued)
 {
-	if(!BuildLimitOnly) {
+	if(!buildLimitOnly) {
 		RequirementStatus ReqsMet = HouseExt::RequirementsMet(pHouse, pItem);
 		if(ReqsMet == RequirementStatus::Forbidden || ReqsMet == RequirementStatus::Incomplete) {
 			return 0;
@@ -227,7 +234,7 @@ signed int HouseExt::PrereqValidate
 			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->GetAIDifficultyIndex()]) {
 				return 1;
 			} else {
-				return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));
+				return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, includeQueued));
 			}
 		}
 
@@ -245,7 +252,7 @@ signed int HouseExt::PrereqValidate
 		return 0;
 	}
 
-	return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));
+	return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, includeQueued));
 }
 
 bool HouseExt::IsDisabledFromShell(
@@ -311,7 +318,7 @@ size_t HouseExt::FindBuildableIndex(
 }
 
 bool HouseExt::HasNeededFactory(
-	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	auto const ItemOwners = pItem->GetOwners();
 	auto const abs = pItem->WhatAmI();
@@ -334,7 +341,7 @@ bool HouseExt::HasNeededFactory(
 // this only verifies the existence, it does not check whether the building is currently
 // in a state that allows it to kick out units. however, it respects BuiltAt.
 bool HouseExt::FactoryForObjectExists(
-	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
 	auto const abs = pItem->WhatAmI();
@@ -352,14 +359,14 @@ bool HouseExt::FactoryForObjectExists(
 }
 
 bool HouseExt::CheckFactoryOwners(
-	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	return HouseExt::CheckFactoryOwner(pHouse, pItem)
 		&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pItem);
 }
 
 bool HouseExt::CheckFactoryOwner(
-	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
 	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
 	auto const pHouseExt = HouseExt::ExtMap.Find(pHouse);
@@ -390,7 +397,7 @@ bool HouseExt::CheckFactoryOwner(
 }
 
 bool HouseExt::CheckForbiddenFactoryOwner(
-	HouseClass* const pHouse, TechnoTypeClass* pItem)
+	HouseClass const* const pHouse, TechnoTypeClass const* pItem)
 {
 	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
 	auto const pHouseExt = HouseExt::ExtMap.Find(pHouse);

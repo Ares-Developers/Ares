@@ -118,26 +118,27 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
-	static int CountOwnedNowTotal(HouseClass* pHouse, TechnoTypeClass const* pItem);
-	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static BuildLimitStatus CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
+	static int CountOwnedNowTotal(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static signed int BuildLimitRemaining(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static BuildLimitStatus CheckBuildLimit(HouseClass const* pHouse, TechnoTypeClass const* pItem, bool includeQueued);
 
-	static RequirementStatus RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem);
+	static RequirementStatus RequirementsMet(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static bool PrerequisitesMet(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass const* pItem);
 
-	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool HasNeededFactory(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static bool FactoryForObjectExists(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 
-	static bool CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool CheckFactoryOwners(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static bool CheckFactoryOwner(HouseClass const* pHouse, TechnoTypeClass const* pItem);
+	static bool CheckForbiddenFactoryOwner(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 
 	static bool IsAnyFirestormActive;
 	static bool UpdateAnyFirestormActive(bool lastChange);
 
-	static signed int PrereqValidate
-		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+	static signed int PrereqValidate(
+		HouseClass const* pHouse, TechnoTypeClass const* pItem,
+		bool buildLimitOnly, bool includeQueued);
 
 	static bool IsDisabledFromShell(
 		HouseClass const* pHouse, BuildingTypeClass const* pItem);
