@@ -1,26 +1,23 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
+#include <HouseClass.h>
 #include <PCX.h>
 
 // bugfix #277 revisited: VeteranInfantry and friends don't show promoted cameos
 DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 {
 	// egads and gadzooks
-	retfunc<SHPStruct *> ret(R, 0x7120C6);
+	retfunc<SHPStruct const*> ret(R, 0x7120C6);
 
-	GET(TechnoTypeClass *, T, ECX);
+	GET(TechnoTypeClass const* const, pThis, ECX);
 
-	SHPStruct *Cameo = T->Cameo;
-	SHPStruct *Alt = T->AltCameo;
+	auto const pCameo = pThis->Cameo;
+	auto const pAlt = pThis->AltCameo;
 
-	auto pData = TechnoTypeExt::ExtMap.Find(T);
+	auto const pData = TechnoTypeExt::ExtMap.Find(pThis);
 
-	return ret(
-		(pData->CameoIsElite())
-			? Alt
-			: Cameo
-	);
+	return ret(pData->CameoIsElite(HouseClass::Player) ? pAlt : pCameo);
 }
 
 // a global var ewww
@@ -68,14 +65,14 @@ DEFINE_HOOK(6A9952, TabCameoListClass_Draw_GetSWPCX, 6)
 
 DEFINE_HOOK(6A980A, TabCameoListClass_Draw_GetTechnoPCX, 8)
 {
-	GET(TechnoTypeClass *, pType, EBX);
+	GET(TechnoTypeClass const* const, pType, EBX);
 
-	auto pData = TechnoTypeExt::ExtMap.Find(pType);
+	auto const pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	const auto& pcxFile = (pData->CameoIsElite() && pData->AltCameoPCX.Exists())
-		? pData->AltCameoPCX
-		: pData->CameoPCX;
+	auto const eliteCameo = pData->CameoIsElite(HouseClass::Player)
+		&& pData->AltCameoPCX.Exists();
 
+	const auto& pcxFile = eliteCameo ? pData->AltCameoPCX : pData->CameoPCX;
 	CameoPCX = pcxFile.GetSurface();
 
 	return 0;

@@ -548,40 +548,39 @@ bool TechnoTypeExt::HasSelectionGroupID(ObjectTypeClass* pType, const char* pID)
 	return (_strcmpi(id, pID) == 0);
 }
 
-bool TechnoTypeExt::ExtData::CameoIsElite()
+bool TechnoTypeExt::ExtData::CameoIsElite(HouseClass const* const pHouse) const
 {
-	HouseClass * House = HouseClass::Player;
-	HouseTypeClass *Country = House->Type;
+	auto const pCountry = pHouse->Type;
 
-	TechnoTypeClass * const T = this->OwnerObject();
-	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(T);
+	auto const pType = this->OwnerObject();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	if(!T->AltCameo && !pExt->AltCameoPCX.Exists()) {
+	if(!pType->AltCameo && !pExt->AltCameoPCX.Exists()) {
 		return false;
 	}
 
-	switch(T->WhatAmI()) {
-		case AbstractType::InfantryType:
-			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
-				return true;
-			} else {
-				return Country->VeteranInfantry.FindItemIndex(static_cast<InfantryTypeClass*>(T)) != -1;
-			}
-		case AbstractType::UnitType:
-			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
-				return true;
-			} else {
-				return Country->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(T)) != -1;
-			}
-		case AbstractType::AircraftType:
-			return Country->VeteranAircraft.FindItemIndex(static_cast<AircraftTypeClass*>(T)) != -1;
-		case AbstractType::BuildingType:
-			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return Country->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(Item)) != -1;
-			} else {
-				auto pData = HouseTypeExt::ExtMap.Find(Country);
-				return pData->VeteranBuildings.Contains(static_cast<BuildingTypeClass*>(T));
-			}
+	switch(pType->WhatAmI()) {
+	case AbstractType::InfantryType:
+		if(pHouse->BarracksInfiltrated && !pType->Naval && pType->Trainable) {
+			return true;
+		} else {
+			return pCountry->VeteranInfantry.FindItemIndex(static_cast<InfantryTypeClass*>(pType)) != -1;
+		}
+	case AbstractType::UnitType:
+		if(pHouse->WarFactoryInfiltrated && !pType->Naval && pType->Trainable) {
+			return true;
+		} else {
+			return pCountry->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(pType)) != -1;
+		}
+	case AbstractType::AircraftType:
+		return pCountry->VeteranAircraft.FindItemIndex(static_cast<AircraftTypeClass*>(pType)) != -1;
+	case AbstractType::BuildingType:
+		if(auto const pItem = pType->UndeploysInto) {
+			return pCountry->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(pItem)) != -1;
+		} else {
+			auto const pData = HouseTypeExt::ExtMap.Find(pCountry);
+			return pData->VeteranBuildings.Contains(static_cast<BuildingTypeClass*>(pType));
+		}
 	}
 
 	return false;

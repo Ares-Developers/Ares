@@ -380,7 +380,7 @@ public:
 
 		virtual void SaveToStream(AresStreamWriter &Stm) override;
 
-		bool CameoIsElite();
+		bool CameoIsElite(HouseClass const* pHouse) const;
 
 		bool CanBeBuiltAt(BuildingTypeClass const* pFactoryType) const;
 
