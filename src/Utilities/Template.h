@@ -27,8 +27,6 @@ public:
 	Valueable(Valueable const& other) = default;
 	Valueable(Valueable&& other) = default;
 
-	virtual ~Valueable() = default;
-
 	Valueable& operator = (Valueable const& value) = default;
 	Valueable& operator = (Valueable&& value) = default;
 
