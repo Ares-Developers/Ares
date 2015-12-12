@@ -61,6 +61,15 @@ bool BuildingExt::IsActiveFirestormWall(BuildingClass* const pBuilding, HouseCla
 	return false;
 }
 
+void BuildingExt::UpdateFactoryQueues(BuildingClass const* const pBuilding)
+{
+	auto const pType = pBuilding->Type;
+	if(pType->Factory != AbstractType::None) {
+		pBuilding->Owner->Update_FactoriesQueues(
+			pType->Factory, pType->Naval, BuildCat::DontCare);
+	}
+}
+
 void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
 		auto pHouse = pThis->Owner;

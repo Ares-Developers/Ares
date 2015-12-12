@@ -188,4 +188,7 @@ public:
 		BuildingClass* pThis, CellStruct mainCoords, int shadowHeight);
 
 	static bool IsActiveFirestormWall(BuildingClass* pBuilding, HouseClass const* pIgnore = nullptr);
+
+	// if it is a factory, update the queues for the owner
+	static void UpdateFactoryQueues(BuildingClass const* pBuilding);
 };

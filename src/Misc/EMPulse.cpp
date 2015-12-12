@@ -1,4 +1,5 @@
 #include "EMPulse.h"
+#include "../Ext/Building/Body.h"
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/BuildingType/Body.h"
@@ -623,11 +624,7 @@ bool EMPulse::enableEMPEffect(
 		pBuilding->DisableStuff();
 		updateRadarBlackout(pBuilding);
 
-		auto const pType = pBuilding->Type;
-		if(pType->Factory != AbstractType::None) {
-			pOwner->Update_FactoriesQueues(
-				pType->Factory, pType->Naval, BuildCat::DontCare);
-		}
+		BuildingExt::UpdateFactoryQueues(pBuilding);
 	} else if(abs == AbstractType::Aircraft) {
 		// crash flying aircraft
 		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
@@ -715,10 +712,7 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 		}
 		updateRadarBlackout(pBuilding);
 
-		if(pType->Factory != AbstractType::None) {
-			pOwner->Update_FactoriesQueues(
-				pType->Factory, pType->Naval, BuildCat::DontCare);
-		}
+		BuildingExt::UpdateFactoryQueues(pBuilding);
 	}
 
 	if(hasPower && pVictim->Deactivated) {
@@ -773,11 +767,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
 		pBuilding->DisableStuff();
 		updateRadarBlackout(pBuilding);
 
-		auto const pType = pBuilding->Type;
-		if(pType->Factory != AbstractType::None) {
-			pBuilding->Owner->Update_FactoriesQueues(
-				pType->Factory, pType->Naval, BuildCat::DontCare);
-		}
+		BuildingExt::UpdateFactoryQueues(pBuilding);
 	} else if(abs == AbstractType::Aircraft) {
 		// crash flying aircraft
 		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
@@ -853,11 +843,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass* const pVictim) {
 		}
 		updateRadarBlackout(pBuilding);
 
-		auto const pType = pBuilding->Type;
-		if(pType->Factory != AbstractType::None) {
-			pBuilding->Owner->Update_FactoriesQueues(
-				pType->Factory, pType->Naval, BuildCat::DontCare);
-		}
+		BuildingExt::UpdateFactoryQueues(pBuilding);
 	}
 
 	if(hasPower && pVictim->Deactivated) {
