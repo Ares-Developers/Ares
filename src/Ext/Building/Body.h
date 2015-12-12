@@ -162,6 +162,8 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
+	static void Clear();
+
 	static DWORD GetFirewallFlags(BuildingClass *pThis);
 
 	//static void ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner); // replaced by generic buildLines
@@ -186,6 +188,4 @@ public:
 		BuildingClass* pThis, CellStruct mainCoords, int shadowHeight);
 
 	static bool IsActiveFirestormWall(BuildingClass* pBuilding, HouseClass const* pIgnore = nullptr);
-
-	static void Clear();
 };
