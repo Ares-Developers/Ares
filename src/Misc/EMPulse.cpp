@@ -623,8 +623,6 @@ bool EMPulse::enableEMPEffect(
 
 		pBuilding->DisableStuff();
 		updateRadarBlackout(pBuilding);
-
-		BuildingExt::UpdateFactoryQueues(pBuilding);
 	} else if(abs == AbstractType::Aircraft) {
 		// crash flying aircraft
 		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
@@ -659,6 +657,11 @@ bool EMPulse::enableEMPEffect(
 			Unsorted::MoveFeedback = false;
 			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
+		}
+
+		if(abs == AbstractType::Building) {
+			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+			BuildingExt::UpdateFactoryQueues(pBuilding);
 		}
 	}
 
@@ -711,12 +714,15 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 			pBuilding->EnableStuff();
 		}
 		updateRadarBlackout(pBuilding);
-
-		BuildingExt::UpdateFactoryQueues(pBuilding);
 	}
 
 	if(hasPower && pVictim->Deactivated) {
 		pVictim->Reactivate();
+
+		if(abs == AbstractType::Building) {
+			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+			BuildingExt::UpdateFactoryQueues(pBuilding);
+		}
 	}
 
 	// allow to spawn units again.
@@ -766,8 +772,6 @@ bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
 
 		pBuilding->DisableStuff();
 		updateRadarBlackout(pBuilding);
-
-		BuildingExt::UpdateFactoryQueues(pBuilding);
 	} else if(abs == AbstractType::Aircraft) {
 		// crash flying aircraft
 		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
@@ -801,6 +805,11 @@ bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
 			Unsorted::MoveFeedback = false;
 			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
+		}
+
+		if(abs == AbstractType::Building) {
+			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+			BuildingExt::UpdateFactoryQueues(pBuilding);
 		}
 
 		if(abstract_cast<FootClass*>(pVictim)) {
@@ -842,12 +851,15 @@ void EMPulse::DisableEMPEffect2(TechnoClass* const pVictim) {
 			pBuilding->EnableStuff();
 		}
 		updateRadarBlackout(pBuilding);
-
-		BuildingExt::UpdateFactoryQueues(pBuilding);
 	}
 
 	if(hasPower && pVictim->Deactivated) {
 		pVictim->Reactivate();
+
+		if(abs == AbstractType::Building) {
+			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+			BuildingExt::UpdateFactoryQueues(pBuilding);
+		}
 
 		// allow to spawn units again.
 		updateSpawnManager(pVictim);
