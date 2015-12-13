@@ -249,10 +249,13 @@ signed int HouseExt::PrereqValidate(
 		}
 	}
 
-	if(HouseExt::HasFactory(pHouse, pItem, true) != FactoryState::Available) {
+	auto const state = HouseExt::HasFactory(pHouse, pItem, true);
+	if(state == FactoryState::NoFactory) {
 		Debug::Log(Debug::Severity::Error, "[NCO Bug detected] "
 			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
 			pHouse->UIName, pItem->ID);
+	}
+	if(state != FactoryState::Available) {
 		return 0;
 	}
 
