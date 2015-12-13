@@ -35,6 +35,12 @@ public:
 		NotReached = 1, // don't do anything
 	};
 
+	enum class FactoryState {
+		NoFactory = 0, // there is no factory building for this
+		Unpowered = 1, // there is a factory building, but it is offline
+		Available = 2 // at least one factory building is as online as required
+	};
+
 	class ExtData final : public Extension<HouseClass>
 	{
 	public:
@@ -126,6 +132,9 @@ public:
 	static bool PrerequisitesMet(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass const* pItem);
 
+	static FactoryState HasFactory(
+		HouseClass const* pHouse, TechnoTypeClass const* pItem,
+		bool requirePower);
 	static bool HasNeededFactory(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 	static bool FactoryForObjectExists(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 

@@ -317,25 +317,49 @@ size_t HouseExt::FindBuildableIndex(
 	return items.size();
 }
 
+HouseExt::FactoryState HouseExt::HasFactory(
+	HouseClass const* const pHouse, TechnoTypeClass const* const pItem,
+	bool const requirePower)
+{
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const bitsOwners = pItem->GetOwners();
+	auto const isNaval = pItem->Naval;
+	auto const abs = pItem->WhatAmI();
+
+	auto ret = FactoryState::NoFactory;
+
+	for(auto const& pBld : pHouse->Buildings) {
+		if(pBld->InLimbo
+			|| pBld->GetCurrentMission() == Mission::Selling
+			|| pBld->QueuedMission == Mission::Selling)
+		{
+			continue;
+		}
+
+		auto const pType = pBld->Type;
+
+		if(pType->Factory != abs
+			|| pType->Naval != isNaval
+			|| !pExt->CanBeBuiltAt(pType)
+			|| !pType->InOwners(bitsOwners))
+		{
+			continue;
+		}
+
+		if(!requirePower || pBld->HasPower) {
+			return FactoryState::Available;
+		}
+
+		ret = FactoryState::Unpowered;
+	}
+
+	return ret;
+}
+
 bool HouseExt::HasNeededFactory(
 	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
-	auto const ItemOwners = pItem->GetOwners();
-	auto const abs = pItem->WhatAmI();
-
-	for(auto const& pBld : pHouse->Buildings) {
-		if(!pBld->InLimbo && pBld->HasPower) {
-			if(pBld->Type->Factory == abs) {
-				if(pBld->GetCurrentMission() != Mission::Selling && pBld->QueuedMission != Mission::Selling) {
-					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
-						return true;
-					}
-				}
-			}
-		}
-	}
-
-	return false;
+	return HasFactory(pHouse, pItem, true) == FactoryState::Available;
 }
 
 // this only verifies the existence, it does not check whether the building is currently
@@ -343,19 +367,7 @@ bool HouseExt::HasNeededFactory(
 bool HouseExt::FactoryForObjectExists(
 	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
 {
-	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
-	auto const abs = pItem->WhatAmI();
-
-	for(auto const& pBld : pHouse->Buildings) {
-		auto const pType = pBld->Type;
-		if(pType->Factory == abs
-			&& pType->Naval == pItem->Naval
-			&& pExt->CanBeBuiltAt(pType)) {
-			return true;
-		}
-	}
-
-	return false;
+	return HasFactory(pHouse, pItem, false) != FactoryState::NoFactory;
 }
 
 bool HouseExt::CheckFactoryOwners(
