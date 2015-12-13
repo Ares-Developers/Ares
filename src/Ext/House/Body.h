@@ -135,8 +135,6 @@ public:
 	static FactoryState HasFactory(
 		HouseClass const* pHouse, TechnoTypeClass const* pItem,
 		bool requirePower);
-	static bool HasNeededFactory(HouseClass const* pHouse, TechnoTypeClass const* pItem);
-	static bool FactoryForObjectExists(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 
 	static bool CheckFactoryOwners(HouseClass const* pHouse, TechnoTypeClass const* pItem);
 	static bool CheckFactoryOwner(HouseClass const* pHouse, TechnoTypeClass const* pItem);

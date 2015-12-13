@@ -48,7 +48,11 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(
 	HouseExt::ExtData* pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	// this has to happen before the first possible "can build" response or NCO happens
-	if(pItem->WhatAmI() != AbstractType::BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return RequirementStatus::Incomplete; }
+	if(pItem->WhatAmI() != AbstractType::BuildingType
+		&& HasFactory(pHouse, pItem, false) == FactoryState::NoFactory)
+	{
+		return RequirementStatus::Incomplete;
+	}
 
 	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return RequirementStatus::Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, pData->PrerequisiteNegatives)) { return RequirementStatus::Forbidden; }
@@ -245,7 +249,7 @@ signed int HouseExt::PrereqValidate(
 		}
 	}
 
-	if(!HouseExt::HasNeededFactory(pHouse, pItem)) {
+	if(HouseExt::HasFactory(pHouse, pItem, true) != FactoryState::Available) {
 		Debug::Log(Debug::Severity::Error, "[NCO Bug detected] "
 			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
 			pHouse->UIName, pItem->ID);
@@ -354,20 +358,6 @@ HouseExt::FactoryState HouseExt::HasFactory(
 	}
 
 	return ret;
-}
-
-bool HouseExt::HasNeededFactory(
-	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
-{
-	return HasFactory(pHouse, pItem, true) == FactoryState::Available;
-}
-
-// this only verifies the existence, it does not check whether the building is currently
-// in a state that allows it to kick out units. however, it respects BuiltAt.
-bool HouseExt::FactoryForObjectExists(
-	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
-{
-	return HasFactory(pHouse, pItem, false) != FactoryState::NoFactory;
 }
 
 bool HouseExt::CheckFactoryOwners(
