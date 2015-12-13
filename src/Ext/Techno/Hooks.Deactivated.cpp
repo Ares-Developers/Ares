@@ -7,6 +7,7 @@
 #include <BuildingClass.h>
 #include <InfantryClass.h>
 #include <UnitClass.h>
+#include <VocClass.h>
 
 static bool IsDeactivated(TechnoClass * pThis) {
 	return TechnoExt::ExtMap.Find(pThis)->IsDeactivated();
@@ -202,4 +203,91 @@ DEFINE_HOOK(73C143, UnitClass_DrawVXL_Deactivated, 5)
 	Value = static_cast<int>(Value * factor);
 
 	return 0x73C15F;
+}
+
+// complete replacement
+DEFINE_HOOK(70FBE0, TechnoClass_Activate, 6)
+{
+	GET(TechnoClass* const, pThis, ECX);
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+
+	/* Check abort conditions:
+		- Is the object currently EMP'd?
+		- Does the object need an operator, but doesn't have one?
+		- Does the object need a powering structure that is offline?
+		If any of the above conditions, bail out and don't activate the object.
+	*/
+	if(pThis->IsUnderEMP() || !pExt->IsPowered() || !pExt->IsOperated()) {
+		return 0x70FC85;
+	}
+
+	pThis->Guard();
+
+	if(auto const pFoot = abstract_cast<FootClass*>(pThis)) {
+		pFoot->Locomotor->Power_On();
+	}
+
+	auto const wasDeactivated = std::exchange(pThis->Deactivated, false);
+
+	if(wasDeactivated) {
+		auto const pType = pThis->GetTechnoType();
+
+		// change: don't play sound when mutex active
+		if(!Unsorted::IKnowWhatImDoing && pType->ActivateSound != -1) {
+			VocClass::PlayAt(pType->ActivateSound, pThis->Location, nullptr);
+		}
+
+		// change: add spotlight
+		auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+		if(pTypeExt->Is_Spotlighted) {
+			++Unsorted::IKnowWhatImDoing;
+			auto const pSpotlight = GameCreate<BuildingLightClass>(pThis);
+			pExt->SetSpotlight(pSpotlight);
+			--Unsorted::IKnowWhatImDoing;
+		}
+	}
+
+	return 0x70FC85;
+}
+
+// complete replacement
+DEFINE_HOOK(70FC90, TechnoClass_Deactivate, 6)
+{
+	GET(TechnoClass* const, pThis, ECX);
+
+	// don't deactivate when inside/on the linked building
+	if(pThis->unknown_bool_418) {
+		auto const pLink = pThis->GetNthLink(0);
+
+		if(pLink && pThis->GetCell()->GetBuilding() == pLink) {
+			return 0x70FD6E;
+		}
+	}
+
+	pThis->Guard();
+	pThis->Deselect();
+
+	if(auto const pFoot = abstract_cast<FootClass*>(pThis)) {
+		pFoot->Locomotor->Power_Off();
+	}
+
+	auto const wasDeactivated = std::exchange(pThis->Deactivated, true);
+
+	if(!wasDeactivated) {
+		auto const pType = pThis->GetTechnoType();
+
+		// change: don't play sound when mutex active
+		if(!Unsorted::IKnowWhatImDoing && pType->DeactivateSound != -1) {
+			VocClass::PlayAt(pType->DeactivateSound, pThis->Location, nullptr);
+		}
+
+		// change: remove spotlight
+		auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+		if(pTypeExt->Is_Spotlighted) {
+			auto const pExt = TechnoExt::ExtMap.Find(pThis);
+			pExt->SetSpotlight(nullptr);
+		}
+	}
+
+	return 0x70FD6E;
 }

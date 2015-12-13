@@ -77,43 +77,6 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 	return 0;
 }
 
-DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
-{
-	GET(TechnoClass *, T, ECX);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-
-	/* Check abort conditions:
-		- Is the object currently EMP'd?
-		- Does the object need an operator, but doesn't have one?
-		- Does the object need a powering structure that is offline?
-	   If any of the above conditions, bail out and don't activate the object.
-	*/
-	if(T->IsUnderEMP() || !pData->IsPowered() || !pData->IsOperated()) {
-		return 0x70FC82;
-	}
-
-	if(pTypeData->Is_Spotlighted) {
-		++Unsorted::IKnowWhatImDoing;
-		auto pSpotlight = GameCreate<BuildingLightClass>(T);
-		pData->SetSpotlight(pSpotlight);
-		--Unsorted::IKnowWhatImDoing;
-	}
-	return 0;
-}
-
-DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
-{
-	GET(TechnoClass *, T, ESI);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
-
-	if(pTypeData->Is_Spotlighted) {
-		auto pExt = TechnoExt::ExtMap.Find(T);
-		pExt->SetSpotlight(nullptr);
-	}
-	return 0;
-}
-
 DEFINE_HOOK(435C08, BuildingLightClass_Draw_ForceType, 5)
 {
 	return 0x435C16;
