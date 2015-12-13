@@ -658,11 +658,6 @@ bool EMPulse::enableEMPEffect(
 			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
 		}
-
-		if(abs == AbstractType::Building) {
-			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
-			BuildingExt::UpdateFactoryQueues(pBuilding);
-		}
 	}
 
 	// release all captured units.
@@ -718,11 +713,6 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 
 	if(hasPower && pVictim->Deactivated) {
 		pVictim->Reactivate();
-
-		if(abs == AbstractType::Building) {
-			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
-			BuildingExt::UpdateFactoryQueues(pBuilding);
-		}
 	}
 
 	// allow to spawn units again.
@@ -807,11 +797,6 @@ bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
 			Unsorted::MoveFeedback = feedback;
 		}
 
-		if(abs == AbstractType::Building) {
-			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
-			BuildingExt::UpdateFactoryQueues(pBuilding);
-		}
-
 		if(abstract_cast<FootClass*>(pVictim)) {
 			pVictim->QueueMission(Mission::Sleep, true);
 		}
@@ -855,11 +840,6 @@ void EMPulse::DisableEMPEffect2(TechnoClass* const pVictim) {
 
 	if(hasPower && pVictim->Deactivated) {
 		pVictim->Reactivate();
-
-		if(abs == AbstractType::Building) {
-			auto const pBuilding = static_cast<BuildingClass*>(pVictim);
-			BuildingExt::UpdateFactoryQueues(pBuilding);
-		}
 
 		// allow to spawn units again.
 		updateSpawnManager(pVictim);

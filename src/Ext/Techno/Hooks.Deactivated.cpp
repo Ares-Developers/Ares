@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Building/Body.h"
 #include "../TechnoType/Body.h"
 #include "../Rules/Body.h"
 #include "../../Misc/Debug.h"
@@ -245,6 +246,11 @@ DEFINE_HOOK(70FBE0, TechnoClass_Activate, 6)
 			pExt->SetSpotlight(pSpotlight);
 			--Unsorted::IKnowWhatImDoing;
 		}
+
+		// change: update factories
+		if(auto const pBld = abstract_cast<BuildingClass*>(pThis)) {
+			BuildingExt::UpdateFactoryQueues(pBld);
+		}
 	}
 
 	return 0x70FC85;
@@ -286,6 +292,11 @@ DEFINE_HOOK(70FC90, TechnoClass_Deactivate, 6)
 		if(pTypeExt->Is_Spotlighted) {
 			auto const pExt = TechnoExt::ExtMap.Find(pThis);
 			pExt->SetSpotlight(nullptr);
+		}
+
+		// change: update factories
+		if(auto const pBld = abstract_cast<BuildingClass*>(pThis)) {
+			BuildingExt::UpdateFactoryQueues(pBld);
 		}
 	}
 
