@@ -50,7 +50,7 @@ DEFINE_HOOK(4CA07A, FactoryClass_AbandonProduction, 8)
 	HouseClass * H = F->Owner;
 
 	HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H);
-	TechnoClass * T = F->InProduction;
+	TechnoClass * T = F->Object;
 	switch(T->WhatAmI()) {
 		case AbstractType::Building:
 			pData->Factory_BuildingType = nullptr;
@@ -121,7 +121,7 @@ DEFINE_HOOK(50B3CB, HouseClass_ShouldDisableCameo_BuildLimit, 6)
 	// queue, and it is already counted in the house's counters. this only
 	// affects positive build limits, for negative ones players could queue up
 	// one more than BuildLimit.
-	if(auto pObj = pFactory->InProduction) {
+	if(auto pObj = pFactory->Object) {
 		if(countQueued && pObj->GetType() == pType && pType->BuildLimit > 0) {
 			auto abs = pType->WhatAmI();
 			// buildings can't queue, and pad aircraft has custom handling

@@ -132,7 +132,7 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(
 	int Remaining = HouseExt::BuildLimitRemaining(pHouse, pItem);
 	if(BuildLimit > 0) {
 		if(Remaining <= 0) {
-			return (includeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
+			return (includeQueued && FactoryClass::FindByOwnerAndProduct(pHouse, pItem))
 				? BuildLimitStatus::NotReached
 				: BuildLimitStatus::ReachedPermanently
 			;

@@ -56,8 +56,8 @@ DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)
 			pFactory = pThis->Owner->GetPrimaryFactory(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 
-		if(pFactory && pFactory->InProduction) {
-			auto pProdType = pFactory->InProduction->GetTechnoType();
+		if(pFactory && pFactory->Object) {
+			auto pProdType = pFactory->Object->GetTechnoType();
 			auto pProdExt = TechnoTypeExt::ExtMap.Find(pProdType);
 
 			// support for pcx cameos

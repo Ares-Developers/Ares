@@ -21,7 +21,7 @@
 // =============================
 // other hooks
 
-DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
+DEFINE_HOOK(4F7870, HouseClass_CanBuild, 7)
 {
 	// int (TechnoTypeClass *item, bool BuildLimitOnly, bool includeQueued)
 	/* return
@@ -30,12 +30,12 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 		-1 - cameo greyed out
 	 */
 
-	GET(HouseClass *, pHouse, ECX);
-	GET_STACK(TechnoTypeClass *, pItem, 0x4);
-	GET_STACK(bool, BuildLimitOnly, 0x8);
-	GET_STACK(bool, IncludeQueued, 0xC);
+	GET(HouseClass const* const, pThis, ECX);
+	GET_STACK(TechnoTypeClass const* const, pItem, 0x4);
+	GET_STACK(bool const, buildLimitOnly, 0x8);
+	GET_STACK(bool const, includeInProduction, 0xC);
 
-	R->EAX(HouseExt::PrereqValidate(pHouse, pItem, BuildLimitOnly, IncludeQueued));
+	R->EAX(HouseExt::PrereqValidate(pThis, pItem, buildLimitOnly, includeInProduction));
 	return 0x4F8361;
 }
 
