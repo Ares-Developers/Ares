@@ -110,26 +110,67 @@ DEFINE_HOOK(443CCA, BuildingClass_KickOutUnit_AircraftType, A)
 	return 0;
 }
 
-// #1286800: build limit > 1 and queues
-DEFINE_HOOK(50B3CB, HouseClass_ShouldDisableCameo_BuildLimit, 6)
+// complete replacement
+DEFINE_HOOK(50B370, HouseClass_ShouldDisableCameo, 5)
 {
-	GET(FactoryClass*, pFactory, EDI);
-	GET(TechnoTypeClass*, pType, ESI);
-	GET(int, countQueued, EAX);
+	GET(HouseClass const* const, pThis, ECX);
+	GET_STACK(TechnoTypeClass const* const, pType, 0x4);
 
-	// the object in production is counted twice: it appears in this factory
-	// queue, and it is already counted in the house's counters. this only
-	// affects positive build limits, for negative ones players could queue up
-	// one more than BuildLimit.
-	if(auto pObj = pFactory->Object) {
-		if(countQueued && pObj->GetType() == pType && pType->BuildLimit > 0) {
-			auto abs = pType->WhatAmI();
-			// buildings can't queue, and pad aircraft has custom handling
-			if(abs == UnitTypeClass::AbsID || abs == InfantryTypeClass::AbsID) {
-				R->EAX(countQueued - 1);
+	auto ret = false;
+
+	if(pType) {
+		auto const abs = pType->WhatAmI();
+		auto const pFactory = pThis->GetPrimaryFactory(
+			abs, pType->Naval, BuildCat::DontCare);
+
+		// special logic for AirportBound
+		if(abs == AbstractType::AircraftType) {
+			auto const pAType = static_cast<AircraftTypeClass const*>(pType);
+			if(pAType->AirportBound) {
+				auto ownedAircraft = 0;
+				auto queuedAircraft = 0;
+
+				for(auto const& pAircraft : RulesClass::Instance->PadAircraft) {
+					ownedAircraft += pThis->CountOwnedAndPresent(pAircraft);
+					if(pFactory) {
+						queuedAircraft += pFactory->CountTotal(pAircraft);
+					}
+				}
+
+				if(ownedAircraft + queuedAircraft >= pThis->AirportDocks) {
+					ret = true;
+				}
+
+				R->EAX(ret);
+				return 0x50B669;
 			}
+		}
+
+		auto queued = 0;
+		if(pFactory) {
+			queued = pFactory->CountTotal(pType);
+
+			// #1286800: build limit > 1 and queues
+			// the object in production is counted twice: it appears in this
+			// factory queue, and it is already counted in the house's counters.
+			// this only affects positive build limits, for negative ones
+			// players could queue up one more than BuildLimit.
+			if(auto const pObject = pFactory->Object) {
+				if(pObject->GetType() == pType && pType->BuildLimit > 0) {
+					--queued;
+				}
+			}
+		}
+
+		// #1521738: to stay consistent, use the new method to calculate this
+		if(HouseExt::BuildLimitRemaining(pThis, pType) - queued <= 0) {
+			ret = true;
+		} else {
+			auto const state = HouseExt::HasFactory(pThis, pType, true);
+			ret = (state != HouseExt::FactoryState::Available);
 		}
 	}
 
-	return 0;
+	R->EAX(ret);
+	return 0x50B669;
 }
