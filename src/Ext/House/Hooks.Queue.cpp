@@ -137,12 +137,14 @@ DEFINE_HOOK(50B370, HouseClass_ShouldDisableCameo, 5)
 					}
 				}
 
+				// #896082: also check BuildLimit, and not always return the
+				// result of this comparison directly. originally, it would
+				// return false here, too, allowing more units than the
+				// BuildLimit permitted.
 				if(ownedAircraft + queuedAircraft >= pThis->AirportDocks) {
-					ret = true;
+					R->EAX(true);
+					return 0x50B669;
 				}
-
-				R->EAX(ret);
-				return 0x50B669;
 			}
 		}
 
