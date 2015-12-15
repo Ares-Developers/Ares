@@ -651,12 +651,19 @@ bool EMPulse::enableEMPEffect(
 	// deactivate and sparkle
 	if(!pVictim->Deactivated && IsDeactivationAdvisable(pVictim)) {
 		auto const selected = pVictim->IsSelected;
+		auto const pFocus = pVictim->Focus;
+
 		pVictim->Deactivate();
+
 		if(selected) {
 			auto const feedback = Unsorted::MoveFeedback;
 			Unsorted::MoveFeedback = false;
 			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
+		}
+
+		if(abs == AbstractType::Building) {
+			pVictim->Focus = pFocus;
 		}
 	}
 
@@ -712,7 +719,11 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 	}
 
 	if(hasPower && pVictim->Deactivated) {
+		auto const pFocus = pVictim->Focus;
 		pVictim->Reactivate();
+		if(abs == AbstractType::Building) {
+			pVictim->Focus = pFocus;
+		}
 	}
 
 	// allow to spawn units again.
@@ -789,12 +800,19 @@ bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
 		}
 
 		auto const selected = pVictim->IsSelected;
+		auto const pFocus = pVictim->Focus;
+
 		pVictim->Deactivate();
+
 		if(selected) {
 			auto const feedback = Unsorted::MoveFeedback;
 			Unsorted::MoveFeedback = false;
 			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
+		}
+
+		if(abs == AbstractType::Building) {
+			pVictim->Focus = pFocus;
 		}
 
 		if(abstract_cast<FootClass*>(pVictim)) {
@@ -839,7 +857,11 @@ void EMPulse::DisableEMPEffect2(TechnoClass* const pVictim) {
 	}
 
 	if(hasPower && pVictim->Deactivated) {
+		auto const pFocus = pVictim->Focus;
 		pVictim->Reactivate();
+		if(abs == AbstractType::Building) {
+			pVictim->Focus = pFocus;
+		}
 
 		// allow to spawn units again.
 		updateSpawnManager(pVictim);
