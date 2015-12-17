@@ -346,7 +346,7 @@ HouseExt::FactoryState HouseExt::HasFactory(
 		auto const pType = pBld->Type;
 
 		if(pType->Factory != abs
-			|| pType->Naval != isNaval
+			|| (abs == AbstractType::UnitType && pType->Naval != isNaval)
 			|| !pExt->CanBeBuiltAt(pType)
 			|| !pType->InOwners(bitsOwners))
 		{
