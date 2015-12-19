@@ -110,6 +110,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
 
+	this->SuppressDeathWeapon_Vehicles.Read(exINI, section, "DeathWeapon.SuppressVehicles");
+	this->SuppressDeathWeapon_Infantry.Read(exINI, section, "DeathWeapon.SuppressInfantry");
 	this->SuppressDeathWeapon.Read(exINI, section, "DeathWeapon.Suppress");
 };
 
@@ -554,6 +556,8 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->CellSpread_MaxAffect)
 		.Process(this->AttachedEffect)
 		.Process(this->DamageAirThreshold)
+		.Process(this->SuppressDeathWeapon_Vehicles)
+		.Process(this->SuppressDeathWeapon_Infantry)
 		.Process(this->SuppressDeathWeapon);
 }
 

@@ -85,6 +85,8 @@ public:
 
 		AttachEffectTypeClass AttachedEffect;
 
+		Valueable<bool> SuppressDeathWeapon_Vehicles;
+		Valueable<bool> SuppressDeathWeapon_Infantry;
 		ValueableVector<TechnoTypeClass*> SuppressDeathWeapon;
 
 		ExtData(WarheadTypeClass* OwnerObject) : Extension<WarheadTypeClass>(OwnerObject),

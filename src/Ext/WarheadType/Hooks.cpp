@@ -115,10 +115,17 @@ DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
 DEFINE_HOOK(702669, TechnoClass_ReceiveDamage_SuppressDeathWeapon, 9)
 {
 	GET(TechnoClass* const, pThis, ESI);
-	GET_STACK(WarheadTypeClass*, pWarhead, STACK_OFFS(0xC4, -0xC));
+	GET_STACK(WarheadTypeClass* const, pWarhead, STACK_OFFS(0xC4, -0xC));
 
 	auto const pExt = WarheadTypeExt::ExtMap.Find(pWarhead);
-	if(!pExt->SuppressDeathWeapon.Contains(pThis->GetTechnoType())) {
+	auto const abs = pThis->WhatAmI();
+
+	auto const suppressed =
+		(abs == AbstractType::Unit && pExt->SuppressDeathWeapon_Vehicles)
+		|| (abs == AbstractType::Infantry && pExt->SuppressDeathWeapon_Infantry)
+		|| pExt->SuppressDeathWeapon.Contains(pThis->GetTechnoType());
+	
+	if(!suppressed) {
 		pThis->FireDeathWeapon(0);
 	}
 
