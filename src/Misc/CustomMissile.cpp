@@ -211,7 +211,6 @@ DEFINE_HOOK(6B7A72, SpawnManagerClass_Update_CustomMissile2, 6)
 
 			auto pTimer = &pSpawnManager->SpawnedNodes.GetItem(idxSpawn)->SpawnTimer;
 			pTimer->Start(pRocket->PauseFrames + pRocket->TiltFrames);
-			pTimer->unknown = 0;
 
 			return 0x6B7B03;
 		}
