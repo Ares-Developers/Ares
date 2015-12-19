@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../HouseType/Body.h"
 #include "../Rules/Body.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
@@ -224,25 +225,29 @@ DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
 
 	// timer used unconditionally to trigger checks
 	if(pThis->DamageDelayTimer.Completed()) {
+		auto const pType = pThis->Type;
+		auto const pExt = HouseTypeExt::ExtMap.Find(pType);
+		auto const degrades = pExt->Degrades.Get(!pType->MultiplayPassive);
+
 		auto const pRules = RulesClass::Instance;
 		pThis->DamageDelayTimer.Start(static_cast<int>(pRules->DamageDelay * 900));
 
 		// damage is only applied conditionally
 		auto const pRulesExt = RulesExt::Global();
-		if(pRulesExt->DegradeEnabled && pThis->HasLowPower()) {
+		if(degrades && pRulesExt->DegradeEnabled && pThis->HasLowPower()) {
 			auto const defaultPercentage = pRulesExt->DegradePercentage.Get(pRules->ConditionYellow);
 
 			for(auto const& pBld : pThis->Buildings) {
-				auto const pType = pBld->Type;
-				auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
+				auto const pBldType = pBld->Type;
+				auto const pBldTypeExt = BuildingTypeExt::ExtMap.Find(pBldType);
 
 				// get the default amount for this building
-				auto const& defaultAmount = pType->PowerDrain ?
+				auto const& defaultAmount = pBldType->PowerDrain ?
 					pRulesExt->DegradeAmountConsumer : pRulesExt->DegradeAmountNormal;
 
 				// get the damage that applies to this building
-				auto damage = pExt->DegradeAmount.Get(defaultAmount);
-				auto const percentage = pExt->DegradePercentage.Get(defaultPercentage);
+				auto damage = pBldTypeExt->DegradeAmount.Get(defaultAmount);
+				auto const percentage = pBldTypeExt->DegradePercentage.Get(defaultPercentage);
 
 				if(damage > 0 && pBld->GetHealthPercentage() > percentage) {
 					pBld->ReceiveDamage(&damage, 0, pRules->C4Warhead, nullptr, false, false, nullptr);

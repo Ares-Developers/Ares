@@ -58,6 +58,8 @@ public:
 		Valueable<bool> ObserverFlagYuriPAL;
 		bool SettingsInherited;
 
+		Nullable<bool> Degrades;
+
 		ExtData(HouseTypeClass* OwnerObject) : Extension<HouseTypeClass>(OwnerObject),
 			RandomSelectionWeight(1),
 			CountryListIndex(100),

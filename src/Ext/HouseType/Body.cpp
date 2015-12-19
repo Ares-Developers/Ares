@@ -301,6 +301,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI) {
 	this->CountryListIndex.Read(exINI, pID, "ListIndex");
 
 	this->VeteranBuildings.Read(exINI, pID, "VeteranBuildings");
+
+	this->Degrades.Read(exINI, pID, "Degrades");
 }
 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
@@ -331,6 +333,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->ParaDropNum = ParentData->ParaDropNum;
 
 			this->VeteranBuildings = ParentData->VeteranBuildings;
+			this->Degrades = ParentData->Degrades;
 		}
 	}
 	this->SettingsInherited = true;
@@ -477,7 +480,8 @@ void HouseTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->ObserverFlag)
 		.Process(this->ObserverFlagSHP)
 		.Process(this->ObserverFlagYuriPAL)
-		.Process(this->SettingsInherited);
+		.Process(this->SettingsInherited)
+		.Process(this->Degrades);
 }
 
 void HouseTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
