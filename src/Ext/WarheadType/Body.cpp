@@ -108,8 +108,6 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->AttachedEffect.Read(exINI);
 
-	this->Solid_Level.Read(exINI, section, "SolidLevel");
-
 	this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
 
 	this->SuppressDeathWeapon.Read(exINI, section, "DeathWeapon.Suppress");
@@ -555,7 +553,6 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->PreventScatter)
 		.Process(this->CellSpread_MaxAffect)
 		.Process(this->AttachedEffect)
-		.Process(this->Solid_Level)
 		.Process(this->DamageAirThreshold)
 		.Process(this->SuppressDeathWeapon);
 }

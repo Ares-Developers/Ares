@@ -20,6 +20,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	INI_EX exINI(pINI);
 
 	this->SubjectToSolid.Read(exINI, pThis->ID, "SubjectToBuildings");
+	this->Solid_Level.Read(exINI, pThis->ID, "SolidLevel");
 	this->SubjectToFirewall.Read(exINI, pThis->ID, "SubjectToFirewall");
 	this->Parachuted.Read(exINI, pThis->ID, "Parachuted");
 
@@ -86,6 +87,7 @@ template <typename T>
 void BulletTypeExt::ExtData::Serialize(T& Stm) {
 	Stm
 		.Process(this->SubjectToSolid)
+		.Process(this->Solid_Level)
 		.Process(this->SubjectToFirewall)
 		.Process(this->Parachuted)
 		.Process(this->SubjectToTrenches)

@@ -173,11 +173,10 @@ CellClass* AresTrajectoryHelper::FindFirstImpenetrableObstacle(
 		} else if(auto const pBld = pCell->GetBuilding()) {
 			// only willingfully fire through enemy buildings
 			if(!pOwner->IsAlliedWith(pBld)) {
-				auto const pWarheadExt = WarheadTypeExt::ExtMap.Find(pWeapon->Warhead);
 				auto const pBldTypeExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
 				// penetrable if warhead level is at least equal to building level
-				if(pWarheadExt->Solid_Level >= pBldTypeExt->Solid_Level) {
+				if(pProjectileExt->Solid_Level >= pBldTypeExt->Solid_Level) {
 					return nullptr;
 				}
 			}

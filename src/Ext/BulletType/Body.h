@@ -23,6 +23,7 @@ public:
 	public:
 		// solid
 		Valueable<bool> SubjectToSolid;
+		Valueable<int> Solid_Level;
 
 		// firewall
 		Valueable<bool> SubjectToFirewall;
@@ -49,6 +50,7 @@ public:
 			RetargetAccuracy(0.0),
 			AirburstSpread(1.5),
 			SubjectToSolid(false),
+			Solid_Level(0),
 			SubjectToFirewall(true),
 			Parachuted(false),
 			SubjectToTrenches(true),

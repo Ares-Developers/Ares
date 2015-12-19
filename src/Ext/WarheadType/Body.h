@@ -60,8 +60,6 @@ public:
 		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
 
-		Valueable<int> Solid_Level;
-
 		Nullable<AnimTypeClass *> Temporal_WarpAway;
 
 		bool AffectsEnemies; // request #397
@@ -97,7 +95,6 @@ public:
 			IC_Duration(0),
 			IC_Cap(-1),
 			DeployedDamage(1.00),
-			Solid_Level(0),
 			Temporal_WarpAway(),
 			AffectsEnemies(true),
 			InfDeathAnim(nullptr),
