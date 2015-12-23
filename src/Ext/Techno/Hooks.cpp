@@ -231,17 +231,17 @@ DEFINE_HOOK(415DF6, AircraftClass_Paradrop_Carryall, 6)
 DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 {
 	GET(TechnoClass* const, pThis, ESI);
-	auto pType = pThis->GetTechnoType();
-	auto pData = TechnoExt::ExtMap.Find(pThis);
+	auto const pType = pThis->GetTechnoType();
+	auto const pData = TechnoExt::ExtMap.Find(pThis);
 
 	CaptureManagerClass* pCapturer = nullptr;
 	ParasiteClass* pParasite = nullptr;
 	TemporalClass* pTemporal = nullptr;
 
-	auto pFoot = abstract_cast<FootClass*>(pThis);
+	auto const pFoot = abstract_cast<FootClass*>(pThis);
 
-	auto CheckWeapon = [=, &pCapturer, &pParasite, &pTemporal]
-		(WeaponTypeClass* pWeapon, int idxWeapon, const char* pTagName)
+	auto const CheckWeapon = [=, &pCapturer, &pParasite, &pTemporal](
+		WeaponTypeClass* pWeapon, int idxWeapon, const char* pTagName)
 	{
 		constexpr auto const Note = "Constructing an instance of [%s]:\r\n"
 			"%s %s (slot %d) has no %s!";
@@ -252,7 +252,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 				"Projectile");
 		}
 
-		auto pWarhead = pWeapon->Warhead;
+		auto const pWarhead = pWeapon->Warhead;
 
 		if(!pWarhead) {
 			Debug::FatalErrorAndExit(
@@ -277,7 +277,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	};
 
 	// iterate all weapons and their elite counterparts
-	for(int i = 0; i < TechnoTypeClass::MaxWeapons; ++i) {
+	for(auto i = 0; i < TechnoTypeClass::MaxWeapons; ++i) {
 		if(auto const pWeapon = pType->Weapon[i].WeaponType) {
 			CheckWeapon(pWeapon, i, "Weapon");
 		}
@@ -292,7 +292,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		pFoot->ParasiteImUsing = pParasite;
 	}
 
-	auto pHouseType = pThis->Owner->Type;
+	auto const pHouseType = pThis->Owner->Type;
 	pData->OriginalHouseType = pHouseType->FindParentCountry();
 	if(!pData->OriginalHouseType) {
 		pData->OriginalHouseType = pHouseType;
