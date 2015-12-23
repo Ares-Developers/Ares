@@ -300,7 +300,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 	// if override is in effect, do not create initial payload.
 	// this object might have been deployed, undeployed, ...
-	if(Unsorted::IKnowWhatImDoing) {
+	if(Unsorted::IKnowWhatImDoing && Unsorted::CurrentFrame) {
 		pData->PayloadCreated = true;
 	}
 
