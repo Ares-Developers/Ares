@@ -259,6 +259,7 @@ public:
 
 		Valueable<bool> NoManualUnload;
 		Valueable<bool> NoManualFire;
+		Valueable<bool> NoManualEnter;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(-1),

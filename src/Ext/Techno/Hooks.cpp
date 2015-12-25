@@ -2047,3 +2047,25 @@ DEFINE_HOOK(7008D4, TechnoClass_GetCursorOverCell_NoManualFire, 6)
 
 	return pExt->NoManualFire ? 0x700AB7u : 0u;
 }
+
+DEFINE_HOOK(51ED8E, InfantryClass_GetCursorOverObject_NoManualEnter, 6)
+{
+	//GET(InfantryClass const* const, pThis, ESI);
+	GET(TechnoTypeClass const* const, pTargetType, EAX);
+
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+	bool enterable = pTargetType->Passengers > 0 && !pExt->NoManualEnter;
+
+	return enterable ? 0x51ED9Cu : 0x51EE3Bu;
+}
+
+DEFINE_HOOK(74031A, UnitClass_GetCursorOverObject_NoManualEnter, 6)
+{
+	//GET(UnitClass const* const, pThis, ESI);
+	GET(TechnoTypeClass const* const, pTargetType, EAX);
+
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+	bool enterable = pTargetType->Passengers > 0 && !pExt->NoManualEnter;
+
+	return enterable ? 0x740324u : 0x74037Au;
+}

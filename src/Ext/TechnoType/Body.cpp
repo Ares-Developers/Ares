@@ -434,6 +434,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->NoManualUnload.Read(exINI, section, "NoManualUnload");
 	this->NoManualFire.Read(exINI, section, "NoManualFire");
+	this->NoManualEnter.Read(exINI, section, "NoManualEnter");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -785,7 +786,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->PassengersWhitelist)
 		.Process(this->PassengersBlacklist)
 		.Process(this->NoManualUnload)
-		.Process(this->NoManualFire);
+		.Process(this->NoManualFire)
+		.Process(this->NoManualEnter);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
