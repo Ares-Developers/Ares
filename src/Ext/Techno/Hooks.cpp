@@ -59,7 +59,7 @@ DEFINE_HOOK(4DECAE, FootClass_Crash_Spin, 5)
 {
 	GET(FootClass*, pThis, ESI);
 	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
-	return pExt->CrashSpin ? 0 : 0x4DED4B;
+	return pExt->CrashSpin ? 0u : 0x4DED4Bu;
 }
 
 // move to the next hva frame, even if this unit isn't moving
@@ -69,7 +69,7 @@ DEFINE_HOOK(4DA8B2, FootClass_Update_AnimRate, 6)
 	auto pType = pThis->GetTechnoType();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	enum { Undecided = 0, NoChange = 0x4DAA01, Advance = 0x4DA9FB };
+	enum { Undecided = 0u, NoChange = 0x4DAA01u, Advance = 0x4DA9FBu };
 
 	// any of these prevents the animation to advance to the next frame
 	if(pThis->IsBeingWarpedOut() || pThis->IsWarpingIn() || pThis->IsAttackedByLocomotor) {
@@ -577,7 +577,7 @@ DEFINE_HOOK(51F76D, InfantryClass_Unload, 5)
 {
 	GET(TechnoClass *, I, ESI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(I->GetTechnoType());
-	return pData->Is_Deso ? 0x51F77D : 0x51F792;
+	return pData->Is_Deso ? 0x51F77Du : 0x51F792u;
 }
 
 DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
@@ -593,7 +593,7 @@ DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
 
 	R->EDI(R->EAX()); // argh
 	R->BL(pData->Is_Cow); // aaaargh! again!
-	return pData->Is_Cow ? 0x51CEAE : 0x51CECD;
+	return pData->Is_Cow ? 0x51CEAEu : 0x51CECDu;
 }
 
 DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
@@ -602,15 +602,17 @@ DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
 
 	U->AltImage = R->EAX<SHPStruct *>(); // jumping over, so replicated
 	return U->Gunner
-		? 0x747BD7
-		: 0x747E90;
+		? 0x747BD7u
+		: 0x747E90u;
 }
 
 // godawful hack - Desolator deploy fire is triggered by ImmuneToRadiation !
 DEFINE_HOOK(5215F9, InfantryClass_UpdateDeploy, 6)
 {
 	GET(TechnoClass *, I, ESI);
-	return TechnoTypeExt::ExtMap.Find(I->GetTechnoType())->Is_Deso ? 0x5216B6 : 0x52160D;
+	return TechnoTypeExt::ExtMap.Find(I->GetTechnoType())->Is_Deso
+		? 0x5216B6u
+		: 0x52160Du;
 }
 
 // 52138C, 6
@@ -691,7 +693,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 		*/
 	}
 
-	return CanAffect ? 0x701CD7 : 0x701CC2;
+	return CanAffect ? 0x701CD7u : 0x701CC2u;
 }
 
 // select the most appropriate firing voice and also account
@@ -968,7 +970,7 @@ DEFINE_HOOK(73758A, UnitClass_ReceivedRadioCommand_QueryEnterAsPassenger_KillDri
 	// with killed drivers.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x73761F : 0);
+	return (pExt->DriverKilled ? 0x73761Fu : 0u);
 }
 
 DEFINE_HOOK(41946B, AircraftClass_ReceivedRadioCommand_QueryEnterAsPassenger_KillDriver, 6)
@@ -977,7 +979,7 @@ DEFINE_HOOK(41946B, AircraftClass_ReceivedRadioCommand_QueryEnterAsPassenger_Kil
 	// with killed drivers.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x4190DD : 0);
+	return (pExt->DriverKilled ? 0x4190DDu : 0u);
 }
 
 DEFINE_HOOK(6F6A58, TechnoClass_DrawHealthBar_HidePips_KillDriver, 6)
@@ -985,7 +987,7 @@ DEFINE_HOOK(6F6A58, TechnoClass_DrawHealthBar_HidePips_KillDriver, 6)
 	// prevent player from seeing pips on transports with killed drivers.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x6F6AB6 : 0);
+	return (pExt->DriverKilled ? 0x6F6AB6u : 0u);
 }
 
 DEFINE_HOOK(7087EB, TechnoClass_ShouldRetaliate_KillDriver, 6)
@@ -993,7 +995,7 @@ DEFINE_HOOK(7087EB, TechnoClass_ShouldRetaliate_KillDriver, 6)
 	// prevent units with killed drivers from retaliating.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x708B17 : 0);
+	return (pExt->DriverKilled ? 0x708B17u : 0u);
 }
 
 DEFINE_HOOK(7091D6, TechnoClass_CanPassiveAquire_KillDriver, 6)
@@ -1001,7 +1003,7 @@ DEFINE_HOOK(7091D6, TechnoClass_CanPassiveAquire_KillDriver, 6)
 	// prevent units with killed drivers from looking for victims.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x70927D : 0);
+	return (pExt->DriverKilled ? 0x70927Du : 0u);
 }
 
 DEFINE_HOOK(6F3283, TechnoClass_CanScatter_KillDriver, 8)
@@ -1009,7 +1011,7 @@ DEFINE_HOOK(6F3283, TechnoClass_CanScatter_KillDriver, 8)
 	// prevent units with killed drivers from scattering when attacked.
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-	return (pExt->DriverKilled ? 0x6F32C5 : 0);
+	return (pExt->DriverKilled ? 0x6F32C5u : 0u);
 }
 
 DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
@@ -1121,8 +1123,8 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 	auto idxW = Unit->SelectWeapon(nullptr);
 	auto W = Unit->GetWeapon(idxW);
 	return (W->WeaponType && W->WeaponType->Warhead->Temporal)
-		? 0x741210
-		: 0x741229
+		? 0x741210u
+		: 0x741229u
 	;
 }
 
@@ -1135,8 +1137,8 @@ DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
 	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
 
 	return (pCarryallData->CarryallCanLift(pTarget))
-		? 0
-		: 0x417DF6
+		? 0u
+		: 0x417DF6u
 	;
 }
 
@@ -1148,8 +1150,8 @@ DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
 	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
 
 	return (pCarryallData->CarryallCanLift(pTarget))
-		? 0
-		: 0x416EC9
+		? 0u
+		: 0x416EC9u
 	;
 }
 
@@ -1317,7 +1319,7 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 
 		// increase the tiberium for the four neighbours and center.
 		// center is retrieved by getting a neighbour cell index >= 8
-		for(int i=0;i<5; ++i) {
+		for(auto i = 0u; i < 5u; ++i) {
 			CellClass* pCell = pCenter->GetNeighbourCell(2*i);
 			int value = ScenarioClass::Instance->Random.RandomRanged(0, 2);
 			pCell->IncreaseTiberium(0, value);
@@ -1774,7 +1776,7 @@ DEFINE_HOOK(6FE31C, TechnoClass_Fire_AllowDamage, 8)
 		R->EDI(0);
 	}
 
-	return applyDamage ? 0x6FE32F : 0x6FE3DF;
+	return applyDamage ? 0x6FE32Fu : 0x6FE3DFu;
 }
 
 // issue #1324: enemy repair wrench visible when it shouldn't
@@ -2033,7 +2035,7 @@ DEFINE_HOOK(700536, TechnoClass_GetCursorOverObject_NoManualFire, 6)
 	auto const pType = pThis->GetTechnoType();
 	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	return pExt->NoManualFire ? 0x70056C : 0;
+	return pExt->NoManualFire ? 0x70056Cu : 0u;
 }
 
 DEFINE_HOOK(7008D4, TechnoClass_GetCursorOverCell_NoManualFire, 6)
@@ -2043,5 +2045,5 @@ DEFINE_HOOK(7008D4, TechnoClass_GetCursorOverCell_NoManualFire, 6)
 	auto const pType = pThis->GetTechnoType();
 	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	return pExt->NoManualFire ? 0x700AB7 : 0;
+	return pExt->NoManualFire ? 0x700AB7u : 0u;
 }
