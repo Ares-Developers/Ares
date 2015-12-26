@@ -234,8 +234,9 @@ void Debug::FreeMouse() {
 void Debug::FatalError(bool Dump) {
 	wchar_t Message[0x400];
 	wsprintfW(Message,
-		L"Ares has encountered an internal error and is unable to continue normally. "
-		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
+		L"An internal error has been encountered and the game is unable to continue normally. "
+		L"Please notify the mod's creators about this issue, or visit our website at "
+		L"http://ares.strategy-x.com for updates and support.\n\n"
 		L"%hs",
 		Ares::readBuffer);
 
