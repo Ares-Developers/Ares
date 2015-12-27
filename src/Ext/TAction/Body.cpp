@@ -13,7 +13,7 @@ TActionExt::ExtContainer TActionExt::ExtMap;
 
 // Enables the Firestorm super weapon for a house.
 /*!
-	\returns Always True.
+	\returns Always true.
 
 	\date 2012-09-24
 */
@@ -35,7 +35,7 @@ bool TActionExt::ExtData::ActivateFirestorm(
 
 // Disables the Firestorm super weapon for a house.
 /*!
-	\returns Always True.
+	\returns Always true.
 
 	\date 2012-09-24
 */
@@ -45,7 +45,7 @@ bool TActionExt::ExtData::DeactivateFirestorm(
 {
 	auto const pExt = HouseExt::ExtMap.Find(pHouse);
 
-	if(!pExt->FirewallActive) {
+	if(pExt->FirewallActive) {
 		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallType);
 
 		if(index >= 0) {
