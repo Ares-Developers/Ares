@@ -189,7 +189,8 @@ DEFINE_HOOK(52DDBA, Frontend_WndProc_MessageBox, 5) {
 		return 0x52DE39;
 	}
 
-	return 0;
+	auto const quick = Ares::UISettings::QuickExit;
+	return quick ? 0x52DE25u : 0u;
 }
 
 // go to the return menu instead of the menu Westwood would like to see here.

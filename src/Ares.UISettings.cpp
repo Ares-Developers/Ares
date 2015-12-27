@@ -262,9 +262,3 @@ DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
 	Ares::CloseConfig(pINI);
 	return 0;
 }
-
-DEFINE_HOOK(52DDBA, Frontend_WndProc_QuickExit, 5)
-{
-	auto const quick = Ares::UISettings::QuickExit;
-	return quick ? 0x52DE25u : 0u;
-}
