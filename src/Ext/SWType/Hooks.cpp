@@ -548,7 +548,8 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 
 		// AI get non-draining SWs
 		if(!pOwner->ControlledByHuman()) {
-			if(!pOwner->FirestormActive) {
+			auto const pOwnerExt = HouseExt::ExtMap.Find(pOwner);
+			if(!pOwnerExt->FirewallActive) {
 				pThis->Launch(*pCell, isPlayer);
 			} else {
 				SWTypeExt::Deactivate(pThis, *pCell, isPlayer);
