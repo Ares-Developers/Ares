@@ -9,6 +9,7 @@
 #include "../../Enum/Prerequisites.h"
 #include "../Techno/Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../../Utilities/INIParser.h"
 
 #include <FactoryClass.h>
 #include <DiscreteSelectionClass.h>
@@ -32,6 +33,15 @@ std::vector<int> HouseExt::AIProduction_BestChoices;
 
 // =============================
 // member funcs
+
+void HouseExt::ExtData::LoadFromINIFile(CCINIClass* const pINI) {
+	auto const pThis = this->OwnerObject();
+	auto const* const pSection = pThis->PlainName;
+
+	INI_EX exINI(pINI);
+
+	this->Degrades.Read(exINI, pSection, "Degrades");
+}
 
 HouseExt::RequirementStatus HouseExt::RequirementsMet(
 	HouseClass const* const pHouse, TechnoTypeClass const* const pItem)
@@ -828,6 +838,7 @@ void HouseExt::ExtData::ApplyAcademy(
 template <typename T>
 void HouseExt::ExtData::Serialize(T& Stm) {
 	Stm
+		.Process(this->Degrades)
 		.Process(this->IonSensitive)
 		.Process(this->FirewallActive)
 		.Process(this->SWLastIndex)
@@ -911,5 +922,15 @@ DEFINE_HOOK(504069, HouseClass_Load_Suffix, 7)
 DEFINE_HOOK(5046DE, HouseClass_Save_Suffix, 7)
 {
 	HouseExt::ExtMap.SaveStatic();
+	return 0;
+}
+
+DEFINE_HOOK(50114D, HouseClass_InitFromINI, 5)
+{
+	GET(HouseClass* const, pThis, EBX);
+	GET(CCINIClass* const, pINI, ESI);
+
+	HouseExt::ExtMap.LoadFromINI(pThis, pINI);
+
 	return 0;
 }

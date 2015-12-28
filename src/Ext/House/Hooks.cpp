@@ -226,8 +226,11 @@ DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
 	// timer used unconditionally to trigger checks
 	if(pThis->DamageDelayTimer.Completed()) {
 		auto const pType = pThis->Type;
-		auto const pExt = HouseTypeExt::ExtMap.Find(pType);
-		auto const degrades = pExt->Degrades.Get(!pType->MultiplayPassive);
+		auto const pTypeExt = HouseTypeExt::ExtMap.Find(pType);
+		auto const type_degrades = pTypeExt->Degrades.Get(!pType->MultiplayPassive);
+
+		auto const pExt = HouseExt::ExtMap.Find(pThis);
+		auto const degrades = pExt->Degrades.Get(type_degrades);
 
 		auto const pRules = RulesClass::Instance;
 		pThis->DamageDelayTimer.Start(static_cast<int>(pRules->DamageDelay * 900));

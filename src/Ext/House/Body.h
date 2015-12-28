@@ -44,6 +44,10 @@ public:
 	class ExtData final : public Extension<HouseClass>
 	{
 	public:
+		// data read from the INI (type-like)
+		Nullable<bool> Degrades;
+
+		// data for the house instance
 		bool IonSensitive;
 		bool FirewallActive;
 
@@ -76,6 +80,8 @@ public:
 		{ }
 
 		virtual ~ExtData();
+
+		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);
