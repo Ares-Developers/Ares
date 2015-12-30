@@ -35,16 +35,19 @@ bool InfantryExt::ExtData::IsOccupant() {
 	\author AlexB
 	\date 2012-07-22
 */
-Action InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
-	// no other mode than skirmish allows to disable it, so we only check whether
-	// multi engineer is disabled there. for all other modes, it's always on.
-	// single player campaigns also use special multi engineer behavior.
-	bool allowDamage = SessionClass::Instance->GameMode != GameMode::Skirmish || GameModeOptionsClass::Instance->MultiEngineer;
+Action InfantryExt::GetEngineerEnterEnemyBuildingAction(
+	BuildingClass* const pBld)
+{
+	// only skirmish allows to disable it, so we only check there. for all other
+	// modes, it's always on. single player campaigns also use special multi
+	// engineer behavior.
+	auto const gameMode = SessionClass::Instance->GameMode;
+	auto allowDamage = gameMode != GameMode::Skirmish 
+		|| GameModeOptionsClass::Instance->MultiEngineer;
 
-	// single player missions are currently hardcoded to "don't do damage".
-	bool campaignSupportsDamage = false; // replace this by a new rules tag.
-	if(SessionClass::Instance->GameMode == GameMode::Campaign && !campaignSupportsDamage) {
-		allowDamage = false;
+	if(gameMode == GameMode::Campaign) {
+		// single player missions are currently hardcoded to "don't do damage".
+		allowDamage = false; // TODO: replace this by a new rules tag.
 	}
 
 	// damage if multi engineer is enabled and target isn't that low on health.
@@ -52,17 +55,16 @@ Action InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 
 		// check to always capture tech structures. a structure counts
 		// as tech if its initial owner is a multiplayer-passive country.
-		bool isTech = false;
-		if(HouseClass * pHouse = pBld->InitialOwner) {
-			if(HouseTypeClass * pCountry = pHouse->Type) {
-				isTech = pCountry->MultiplayPassive;
-			}
-		}
+		auto const isTech = pBld->InitialOwner
+			? pBld->InitialOwner->IsNeutral() : false;
 
-		if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !isTech) {
+		auto const pRulesExt = RulesExt::Global();
+		if(!isTech || !pRulesExt->EngineerAlwaysCaptureTech) {
 			// no civil structure. apply new logic.
-			if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
-				return (RulesExt::Global()->EngineerDamage > 0) ? Action::Damage : Action::NoEnter;
+			auto const capLevel = RulesClass::Global()->EngineerCaptureLevel;
+			if(pBld->GetHealthPercentage() > capLevel) {
+				return (pRulesExt->EngineerDamage > 0.0)
+					? Action::Damage : Action::NoEnter;
 			}
 		}
 	}
