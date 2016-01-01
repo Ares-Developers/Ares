@@ -1084,7 +1084,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::RefineTiberium(double const amount, int const idxType) {
+void TechnoExt::ExtData::RefineTiberium(float const amount, int const idxType) {
 	auto const pThis = this->OwnerObject();
 	auto const pHouse = pThis->GetOwningHouse();
 
@@ -1112,7 +1112,7 @@ void TechnoExt::ExtData::RefineTiberium(double const amount, int const idxType) 
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::DepositTiberium(double const amount, double const bonus, int const idxType) {
+void TechnoExt::ExtData::DepositTiberium(float const amount, float const bonus, int const idxType) {
 	auto const pThis = this->OwnerObject();
 	auto const pHouse = pThis->GetOwningHouse();
 	auto const pTiberium = TiberiumClass::Array->GetItem(idxType);

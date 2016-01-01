@@ -282,21 +282,19 @@ DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
 DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 {
 	GET(HouseClass* const, pThis, ECX);
-	REF_STACK(float const, amountFlt, 0x4);
+	GET_STACK(float, amount, 0x4);
 	GET_STACK(int const, idxType, 0x8);
-
-	auto amount = static_cast<double>(amountFlt);
 
 	pThis->SiloMoney += Game::F2I(amount * 5.0);
 
 	if(SessionClass::Instance->GameMode == GameMode::Campaign || pThis->CurrentPlayer) {
 		// don't change, old values are needed for silo update
-		const int lastStorage = static_cast<int>(pThis->OwnedTiberium.GetTotalAmount());
-		const int lastTotalStorage = pThis->TotalStorage;
+		const auto lastStorage = static_cast<int>(pThis->OwnedTiberium.GetTotalAmount());
+		const auto lastTotalStorage = pThis->TotalStorage;
 
 		// this is the upper limit for stored tiberium
 		if(amount > lastTotalStorage - lastStorage) {
-			amount = static_cast<double>(lastTotalStorage - lastStorage);
+			amount = static_cast<float>(lastTotalStorage - lastStorage);
 		}
 
 		// go through all buildings and fill them up until all is in there
@@ -305,7 +303,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 				break;
 			}
 
-			int storage = pBuilding->Type->Storage;
+			auto const storage = pBuilding->Type->Storage;
 			if(pBuilding->IsOnMap && storage > 0) {
 				// put as much tiberium into this silo
 				auto freeSpace = storage - pBuilding->Tiberium.GetTotalAmount();
