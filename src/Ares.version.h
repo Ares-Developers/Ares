@@ -1,11 +1,11 @@
 #pragma once
 
 // define this to switch to release version
-//#define IS_RELEASE_VER
+#define IS_RELEASE_VER
 
-#define VERSION_MAJOR 15
-#define VERSION_MINOR 362
-#define VERSION_REVISION 1182
+#define VERSION_MAJOR 16
+#define VERSION_MINOR 1
+#define VERSION_REVISION 1010
 
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 12) | (VERSION_REVISION))
 
