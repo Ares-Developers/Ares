@@ -245,10 +245,10 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->ImmuneToSaboteurs.Read(exINI, pID, "ImmuneToSaboteurs");
 
-	this->AIBuildCounts.Read(exINI, pID, "AIBuildCounts");
-	this->AIExtraCounts.Read(exINI, pID, "AIExtraCounts");
+	//this->AIBuildCounts.Read(exINI, pID, "AIBuildCounts");
+	//this->AIExtraCounts.Read(exINI, pID, "AIExtraCounts");
 
-	this->BuildupTime.Read(exINI, pID, "BuildupTime");
+	//this->BuildupTime.Read(exINI, pID, "BuildupTime");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization() {

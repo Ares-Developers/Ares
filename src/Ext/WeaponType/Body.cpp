@@ -130,7 +130,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->ApplyDamage.Read(exINI, section, "ApplyDamage");
 
-	this->Ammo.Read(exINI, section, "Ammo");
+	//this->Ammo.Read(exINI, section, "Ammo");
 }
 
 // #680 Chrono Prison / Abductor

@@ -413,10 +413,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->CrushDamage.Read(exINI, section, "CrushDamage.%s");
 	this->CrushDamageWarhead.Read(exINI, section, "CrushDamage.Warhead");
 
-	this->ReloadRate.Read(exINI, section, "ReloadRate");
+	//this->ReloadRate.Read(exINI, section, "ReloadRate");
 
-	this->ReloadAmount.Read(exINI, section, "ReloadAmount");
-	this->EmptyReloadAmount.Read(exINI, section, "EmptyReloadAmount");
+	//this->ReloadAmount.Read(exINI, section, "ReloadAmount");
+	//this->EmptyReloadAmount.Read(exINI, section, "EmptyReloadAmount");
 
 	this->Saboteur.Read(exINI, section, "Saboteur");
 
@@ -425,16 +425,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->CanPassiveAcquire_Cloak.Read(exINI, section, "CanPassiveAquire.Cloak");
 
 	// self healing
-	this->SelfHealing_Rate.Read(exINI, section, "SelfHealing.Rate");
-	this->SelfHealing_Amount.Read(exINI, section, "SelfHealing.%sAmount");
-	this->SelfHealing_Max.Read(exINI, section, "SelfHealing.%sMax");
+	//this->SelfHealing_Rate.Read(exINI, section, "SelfHealing.Rate");
+	//this->SelfHealing_Amount.Read(exINI, section, "SelfHealing.%sAmount");
+	//this->SelfHealing_Max.Read(exINI, section, "SelfHealing.%sMax");
 
 	this->PassengersWhitelist.Read(exINI, section, "Passengers.Allowed");
 	this->PassengersBlacklist.Read(exINI, section, "Passengers.Disallowed");
 
 	this->NoManualUnload.Read(exINI, section, "NoManualUnload");
 	this->NoManualFire.Read(exINI, section, "NoManualFire");
-	this->NoManualEnter.Read(exINI, section, "NoManualEnter");
+	//this->NoManualEnter.Read(exINI, section, "NoManualEnter");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

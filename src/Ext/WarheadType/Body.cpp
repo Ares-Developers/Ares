@@ -92,7 +92,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->InfDeathAnim.Read(exINI, section, "InfDeathAnim");
 	
 	this->PreImpactAnim.Read(exINI, section, "PreImpactAnim");
-	this->NukeFlashDuration.Read(exINI, section, "NukeFlash.Duration");
+	//this->NukeFlashDuration.Read(exINI, section, "NukeFlash.Duration");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
@@ -108,7 +108,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->AttachedEffect.Read(exINI);
 
-	this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
+	//this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
 
 	this->SuppressDeathWeapon_Vehicles.Read(exINI, section, "DeathWeapon.SuppressVehicles");
 	this->SuppressDeathWeapon_Infantry.Read(exINI, section, "DeathWeapon.SuppressInfantry");
