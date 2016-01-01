@@ -24,7 +24,7 @@ BEGIN
   BEGIN
    VALUE "ProductName", "Ares\0"
    VALUE "CompanyName", "The Ares Contributors\0"
-   VALUE "LegalCopyright", "© The Ares Contributors 2007-2015\0"
+   VALUE "LegalCopyright", "© The Ares Contributors 2007-2016\0"
    VALUE "FileDescription", "The Ares DLL, unlocking new functionality for Command & Conquer™: Yuri's Revenge™\0"
    VALUE "FileVersion", VERSION_STR "\0"
    VALUE "ProductVersion", DISPLAY_STR "\0"
