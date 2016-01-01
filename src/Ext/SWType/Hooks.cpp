@@ -204,7 +204,7 @@ DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 // translates SW click to type
 DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
-	auto Action = static_cast<::Action>(R->Stack32(0x9C));
+	auto Action = static_cast<enum class Action>(R->Stack32(0x9C));
 	if(Action < Actions::SuperWeaponDisallowed) {
 		// get the actual firing SW type instead of just the first type of the
 		// requested action. this allows clones to work for legacy SWs (the new

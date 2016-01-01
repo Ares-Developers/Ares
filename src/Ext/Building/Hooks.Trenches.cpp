@@ -139,7 +139,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 
 DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 {
-	GET(::Action, Action, EAX);
+	GET(enum class Action, Action, EAX);
 	GET(BuildingClass *, pThis, ECX);
 
 	GET_STACK(ObjectClass *, pTarget, 0x8);

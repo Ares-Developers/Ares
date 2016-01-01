@@ -1212,7 +1212,7 @@ DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
 DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 {
 	GET(TechnoClass*, pTarget, ESI);
-	REF_STACK(::Action, Action, STACK_OFFS(0x20, 0x10));
+	REF_STACK(enum class Action, Action, STACK_OFFS(0x20, 0x10));
 
 	bool allowed = false;
 
