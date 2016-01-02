@@ -1,6 +1,6 @@
 [branch]
-Name=Save Haven
-Description=The only place in an uncertain world where savegames work as they should. Welcome back, Savegames!
-TargetVersion=1.0
-Stable=no
-ReadyForTesting=yes
+Name=Ares Development Mainline
+Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+TargetVersion=0.A
+Stable=yes
+ReadyForTesting=no
