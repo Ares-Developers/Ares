@@ -26,6 +26,7 @@ public:
 	Valueable<double> FirepowerMultiplier{ 1.0 };
 	Valueable<double> ArmorMultiplier{ 1.0 };
 	Valueable<double> SpeedMultiplier{ 1.0 };
+	Valueable<double> WeaponRangeMultiplier{ 1.0 };
 	Valueable<bool> Cloakable{ false };
 
 	//#408, residual damage

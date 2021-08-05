@@ -38,6 +38,7 @@ bool AttachEffectTypeClass::Load(AresStreamReader &Stm, bool RegisterForChange) 
 		.Process(this->FirepowerMultiplier)
 		.Process(this->ArmorMultiplier)
 		.Process(this->SpeedMultiplier)
+		.Process(this->WeaponRangeMultiplier)
 		.Process(this->Cloakable)
 		.Process(this->Delay)
 		.Success()
@@ -57,6 +58,7 @@ bool AttachEffectTypeClass::Save(AresStreamWriter &Stm) const {
 		.Process(this->FirepowerMultiplier)
 		.Process(this->ArmorMultiplier)
 		.Process(this->SpeedMultiplier)
+		.Process(this->WeaponRangeMultiplier)
 		.Process(this->Cloakable)
 		.Process(this->Delay)
 		.Success()
@@ -75,6 +77,7 @@ void AttachEffectTypeClass::Read(INI_EX &exINI) {
 	this->FirepowerMultiplier.Read(exINI, pSection, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, pSection, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, pSection, "AttachEffect.SpeedMultiplier");
+	this->WeaponRangeMultiplier.Read(exINI, pSection, "AttachEffect.WeaponRangeMultiplier");
 	this->Cloakable.Read(exINI, pSection, "AttachEffect.Cloakable");
 
 	/*
