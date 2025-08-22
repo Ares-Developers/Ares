@@ -1,0 +1,402 @@
+/* GENERAL PAGE LAYOUT STUFF */
+
+HTML, BODY {
+	/*height: 100%;*/
+	margin: 0px;
+}
+
+BODY {
+	color: #ccdaff;
+	font-size: 10pt;
+	font-family: "Nimbus Sans L", Helvetica, Arial, sans-serif;
+	background-color: #0b1e4c;
+	background-image: url("images/bg_repeat.png");
+	background-position: center top;
+	background-repeat: repeat-x;
+	/*background-image: url("images/background.png");
+	background-repeat: no-repeat;*/
+	/*padding: 20px;*/
+}
+
+A, A:link {
+	color: #e6ecff;
+	text-decoration: underline;
+	font-weight: bold;
+}
+A:hover {
+	color: #f2f6ff;
+}
+
+A:active {
+	color: #f22e37;
+}
+A:visited {
+	color: #dee7ff;
+}
+
+
+
+/* surrounds everything, adds border */
+#wrapper {
+	/*min-height: 100%;
+	height: auto !important;
+	height: 100%;*/
+	width: 1000px;
+	min-height: 700px;
+	/*border: 3px solid #8fa0cc;*/
+	/*margin: 20px;*/
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2em;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	/*border-color:#8FA0CC;
+	border-style: solid;
+	border-width: 0px 1px 1px 1px;*/
+	background-color: #0f2969;
+	background-image: url("images/background.png");
+	background-repeat: no-repeat;
+	background-position: left top;
+	-moz-box-shadow: #040A1A 0px 5px 25px;
+	-webkit-box-shadow: #040A1A 0px 5px 25px;
+
+}
+
+/* the main header */
+#header H1 {
+	text-transform: uppercase;
+	text-shadow: 0px 0px #0f2969;
+	font-size: 64pt;
+	margin: 0px 0px 0px 40px;
+}
+
+#header H2 {
+	font-size: 24pt;
+	margin: -20px 0px 5px 120px;
+	letter-spacing: 0.2em;
+}
+
+/* CONTENT STYLING */
+
+#content_wrapper {
+	line-height: 1.5em;
+	margin: 0px 10px 0px 200px;
+	padding: 1em;
+	border-top: 1px solid #8FA0CC;
+}
+
+#content_wrapper H1, #content_wrapper H2, #content_wrapper H3, #content_wrapper H4, #content_wrapper H5, #content_wrapper H6 {
+	color: #d1deff;
+	font-family: "Nimbus Roman No9 L", Georgia, "Liberation Serif", serif;
+	text-transform: uppercase;
+}
+
+#content_wrapper H3 {
+	font-size: 18pt;
+	padding-top: 0.5em;
+	margin-bottom: 0.3em;
+	clear: both;
+	border-top: 1px solid #8FA0CC;
+}
+
+#content_wrapper H3.newsheader {
+	margin-bottom: 1em;
+}
+
+/* NAVIGATION STYLING */
+
+#menu_pos_wrapper {
+	position: relative;
+	top: 0px;
+	left: 0px;
+}
+
+
+#menu {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 200px;
+	overflow: visible;
+	padding-top: 2em;
+	padding-left: 2em;
+}
+
+#menu A {
+	display: block;
+	margin-bottom: 0.3em;
+}
+
+#menu A.dllink {
+	color: #f2d837;
+}
+
+.dllink {
+	/*visibility: hidden;*/
+}
+
+.mirrorlist {
+	list-style-type: none;
+	padding: 0em;
+	text-align: center;
+}
+
+.mirrorlist A {
+	text-decoration: none;
+}
+
+.mirrorlist A:hover {
+	text-decoration: underline;
+}
+
+.mirrorlist A IMG {
+	border: none;
+}
+
+#menu A.level_2 {
+	padding-left: 1em;
+	font-size: 80%;
+}
+
+/* TOP COLUMNS */
+#columns {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	line-height: 1.3em;
+}
+
+#columns H4 {
+	margin: 0px;
+	font-size: medium;
+	color: #dee7ff;
+}
+
+
+.column {
+	width: 30%;
+	min-height: 150px;
+	padding: 0.5em;
+}
+
+
+#col_1 {
+	/*position: absolute;
+	top: 0px;
+	left: 0px;*/
+	float: left;
+}
+
+#col_1 IMG {
+	float: left;
+	margin-right: 0.3em;
+	margin-top: 0.8em;
+}
+
+
+#col_2 {
+	border-color:#8FA0CC;
+	border-style: solid;
+	border-width: 0px 1px 0px 1px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 8em; /* 1em for each mirror */
+}
+
+#col_3 {
+	/*position: absolute;
+	top: 0px;
+	right: 0px;*/
+	float: right;
+}
+
+#col_3 A.dllink {
+	text-decoration: none;
+	display: block;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: larger;
+	/*padding-top: 1px;
+	padding-bottom: 1px;*/
+}
+
+#col_3 A.dllink:hover {
+	background-color: #14378c;
+	background-color: rgba(20, 55, 140, 0.65);
+	/*border: 1px dashed #ccdaff;*/
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+#col_3 A.dllink:active {
+	border: 1px dashed #cc0000;
+}
+.dllink IMG {
+	border: none;
+}
+
+#col_3 A.dllink {
+	color: #F2D837;
+}
+
+/* NEWS STYLING */
+/*#news_expanded {
+	display: none;
+}
+
+#news_expanded:target {
+	display: block;
+}
+
+.newstoggle {
+	float: right;
+	margin-left: 1em;
+	font-size: xx-small;
+}*/
+
+#news_expanded article {
+	border-top: 1px solid #8FA0CC;
+	margin-top: 1em;
+}
+
+#news_expanded article > h1 {
+	margin-left: -1em;
+}
+
+#news_expanded article > h1 a {
+	text-decoration: none;
+}
+
+#news_expanded article > footer {
+	text-align: right;
+	font-size: 80%;
+}
+
+#more_ann_link {
+	display: block;
+	text-align: right;
+	font-style: italic;
+	margin-top: 1.5em;
+}
+
+.tableborder {
+	border-bottom: 1px solid #8FA0CC;
+	margin-bottom: 1em;
+}
+.maintitle A {
+	text-decoration: none;
+	font-size: large;
+	padding-top: 0.3em;
+	letter-spacing: 0.08em;
+}
+.maintitle A:hover {
+	text-decoration: underline;
+}
+.maintitle A:before {
+	content: "\00BB\0020";
+}
+
+
+.row2 {
+	color: #8fa0cc;
+	font-size: x-small;
+	padding-bottom: 1em;
+	text-align: right;
+}
+
+
+.row2 A {
+	color: #8fa0cc;
+	font-weight: normal;
+}
+
+.left {
+	width: 100px;
+	min-width: 100px;
+	border-right: 1px solid #8FA0CC;
+	min-height: 200px;
+	padding-right: 0.8em;
+	text-align: center;
+}
+
+
+.right {
+	padding:0.8em;
+}
+
+.right IMG {
+	max-width:  600px;
+	cursor: pointer;
+}
+
+.right IMG:active {
+	max-width: 100%;
+}
+
+.right PRE {
+	background-color: #0d2359;
+	border: 1px dashed #14378c;
+	font-size: 80%;
+	font-family: "Inconsolata Medium", "DejaVu Sans Mono", "Nimbus Mono L", "Courier", monospace;
+	max-width: 600px;
+	max-height: 400px;
+	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: auto;
+	padding: 0.5em;
+}
+
+
+.right PRE BR {
+	/* this is fugly and we'll have to see if it works correctly in all cases;
+	necessary because the forum saves extra <br>s for [code] blocks, but HTML's pre uses the normal
+	line breaks, leading to superfluous line breaks and super spaced code. */
+	display: none;
+}
+
+
+.toplink {
+	font-weight: normal;
+	font-size: x-small;
+	text-align: right;
+	display: block;
+}
+
+
+/* FOOTER STYLING */
+
+#footer {
+	border-top: 1px solid #8FA0CC;
+	text-align: center;
+	font-size: x-small;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #a1b4e6;
+	padding: 0.5em 0.5em 1.5em 0.5em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
+	line-height: 1.3em;
+}
+
+/* IE defense */
+#pos_browser {
+	position: absolute;
+	top: 0.1em;
+	right: -1em;
+	border: 2px solid Red;
+	background-color: #0f2969;
+	padding: 0.5em;
+	display: none;
+}
+#pos_browser P {
+	margin: 0px;
+}
+
+.browser_links {
+	font-size: large;
+	text-align: center;
+}

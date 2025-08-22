@@ -1,0 +1,77 @@
+/* 	==================================
+	G E N E R A L  A T T R I B U T E S
+	==================================
+*/
+/* Container */
+div#navbg {
+	background-image: url("images/bg_navbar.png");
+	background-repeat: repeat-x;
+	background-position: top center;
+}
+/* Main menu-bar */
+ul#nav {
+
+}
+/* 	============================
+	M E N U  A T T R I B U T E S
+	============================
+*/
+/* All menus */
+ul#nav, ul#nav ul {
+	border-collapse: collapse;
+}
+/* All sub-menus */
+ul#nav li > ul {
+	background-color: #0F2969;
+	background-image: url("images/bg_menu.png");
+	background-position: bottom center;
+	background-repeat: repeat-x;
+	border: 1px solid #405280;
+}
+/* Menus next to a hovered item */
+ul#nav li:hover > ul {
+	
+}
+/* Menus below a hovered primary item (i.e. first level menus) */
+ul#nav > li:hover > ul {
+	
+}
+/* 	============================
+	I T E M  A T T R I B U T E S
+	============================
+*/
+/* Item text properties */
+ul#nav, ul#nav a {
+	color: #CCDAFF;
+	text-decoration: none;
+}
+/* All items */
+ul#nav li {
+	
+}
+ul#nav li:hover, ul#nav a:hover {
+	color: #E6ECFF;
+}
+/* Primary items (in the bar) */
+ul#nav > li {
+	cursor: pointer;
+	padding-left: 1em;
+	padding-top: 2px;
+	height: 23px;
+}
+/* Non-primary items (in the menus) */
+ul#nav > li li {
+	padding: 0em 0.3em 0em 0.3em;
+	border-bottom: 1px solid #405280;
+	border-collapse: collapse;
+}
+ul#nav > li li:hover {
+	background-color: #123280;
+	border-bottom: 1px solid #465a8c;
+}
+ul#nav > li li:last-child {
+	border-bottom: none;
+}
+ul#nav > li li > a {
+	
+}
